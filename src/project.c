@@ -71,7 +71,9 @@ int main(void)
       strcat(full_json_path, dir_JSON->d_name);
       //printf("full json path is: %s\n",full_json_path);
 
+      printf("================================\n");
       read_json(full_json_path);
+      printf("================================\n");
 
       //printf("name of json is: %s\n",dir_JSON->d_name);
 
@@ -145,7 +147,7 @@ int main(void)
 }
 
 
-// menei na ftiaksw tin read json
+// menei na ftiaksw tin read json (etoimh check!)
 // menei na allaksw to int se string pou pername mesa stin insert sto dentro kai na xrhsimopoihsw gia tis sugkriseis
 // tin sunarthsh pou mou edwse o allos sto discord
 // kai telos menei na printarw ta apotelesmata sto csv arxeio.
