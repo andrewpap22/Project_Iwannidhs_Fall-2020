@@ -10,7 +10,7 @@ void insert_entry(tree_entry *, bucket *);
 /* Inserts into the tree nodes (buckets) the relations of each and every json file.
  * i.e. if they're equal or not equal files (based on the project's description) 
  */
-void add_relation(tree_entry *, int, int, int);
+void add_relation(tree_entry *, char*, char*, int);
 
 /* Prints the relations of json files on each and every node of the tree. */
 void print_node_relations(tree_entry *);

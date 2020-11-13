@@ -25,7 +25,7 @@ void insert_entry(tree_entry *entry, bucket* first_bucket){
 }	
 	
 // }
-void add_relation(tree_entry* root, int json1, int json2, int relation){
+void add_relation(tree_entry* root, char* json1, char* json2, int relation){
 	if(relation==1){
 		//if the jsons are already in the same group return
 
@@ -89,7 +89,8 @@ void print_node_relations(tree_entry* node){
 	while(iterator){
 		
 		for (int i = 0; i < iterator->numofentries; i++){
-			if (node->json != iterator->identical_entries[i]->json){
+			if (compare(node->path_with_JSON,iterator->identical_entries[i]->path_with_JSON)==0){
+			// if (node->json != iterator->identical_entries[i]->json){
 				sum += 1;
 				// printf("json: %d, entry: %d\n",node->json,i);
 				// printf("json %d is the same with json %d\n",node->json,iterator->identical_entries[i]->json);

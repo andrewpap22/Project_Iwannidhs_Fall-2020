@@ -58,8 +58,9 @@ typedef struct tree_entry
 
 
 /* Basic Binary Search tree operatons for our project. */
+int compare(char*, char*);
 tree_entry *insert(tree_entry *, int, char *);
-tree_entry *search(tree_entry *, int);
+tree_entry *search(tree_entry *, char *);
 // tree_entry *Delete(tree_entry *,int);
 void preorder(tree_entry *);
 void inorder(tree_entry *);

@@ -1,10 +1,35 @@
 #include "../headers/structs.h"
 
+int compare(char* a, char* b){
+	//returns 0 if a is smaller, 1 if its bigger, 3 if they are the same (should never return 3)
+    int i=0;
+    while(1){
+        if(i<strlen(a) && i<strlen(b)){
+            if(*(a+i)<*(b+i)){
+                return 0;
+            }
+			else if(*(a+i)>*(b+i)){
+                return 1;
+            }
+        }
+        else if(i==strlen(a) && i!=strlen(b)){
+            return 0;
+        }
+        else if(i==strlen(b) && i!=strlen(a)){
+            return 1;
+        }
+        else{
+            return 3;
+        }
+    i++;
+    }
+}
+
+
 tree_entry *insert(tree_entry *T, int x, char *path_with_JSON)
 {
 
-	if (T == NULL)
-	{
+	if (T == NULL){
 
 		T = (tree_entry *)malloc(sizeof(tree_entry));
 		T->json = x;
@@ -19,20 +44,25 @@ tree_entry *insert(tree_entry *T, int x, char *path_with_JSON)
 		T->headbucket->first_bucket->identical_entries[0] = T;
 		T->headbucket->first_bucket->numofentries = 1;
 	}
-	else if (x > T->json) // insert in right subtree
+	// else if (x > T->json) // insert in right subtree
+	else if (compare(path_with_JSON,T->path_with_JSON)==1) // insert in right subtree
+
 	{
 		T->right = insert(T->right, x, path_with_JSON);
 		if (BF(T) == -2)
-			if (x > T->right->json)
+			// if (x > T->right->json)
+			if (compare(path_with_JSON,T->right->path_with_JSON)==1)
 				T = RR(T);
 			else
 				T = RL(T);
 	}
-	else if (x < T->json)
+	// else if (x < T->json)
+	else if (compare(path_with_JSON,T->path_with_JSON)==0) // insert in left subtree
 	{
 		T->left = insert(T->left, x, path_with_JSON);
 		if (BF(T) == 2)
-			if (x < T->left->json)
+			// if (x < T->left->json)
+			if (compare(path_with_JSON,T->left->path_with_JSON)==0)
 				T = LL(T);
 			else
 				T = LR(T);
@@ -43,17 +73,19 @@ tree_entry *insert(tree_entry *T, int x, char *path_with_JSON)
 	return (T);
 }
 
-tree_entry *search(tree_entry *T, int x)
+tree_entry *search(tree_entry *T, char* x)
 {
 	if (T == NULL)
 	{
 		return NULL;
 	}
-	if (x > T->json)
+	// if (x > T->json)
+	if (compare(x,T->path_with_JSON)==1)
 	{
 		return (search(T->right, x));
 	}
-	else if (x < T->json)
+	// else if (x < T->json)
+	else if (compare(x,T->path_with_JSON)==0)
 	{
 		return (search(T->left, x));
 	}

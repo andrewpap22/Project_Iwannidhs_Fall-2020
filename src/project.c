@@ -27,8 +27,8 @@ int main(void)
   char *line = NULL;
   size_t len = 0;
   ssize_t read;
-  int json1;
-  int json2;
+  char* json1 = malloc(sizeof(char)*50);
+  char* json2 = malloc(sizeof(char)*50);
   int relation;
   char *part_of_string;
 
@@ -71,44 +71,48 @@ int main(void)
       strcat(full_json_path, dir_JSON->d_name);
       //printf("full json path is: %s\n",full_json_path);
 
-      printf("================================\n");
-      read_json(full_json_path);
-      printf("================================\n");
+      // printf("================================\n");
+      // read_json(full_json_path);
+      // printf("================================\n");
 
-      //printf("name of json is: %s\n",dir_JSON->d_name);
+      // printf("name of website is: %s\n",name_of_json);
 
       num_of_json = atoi(strtok(dir_JSON->d_name, ".")); //auto edw einai pou prepei na ginei string kai oxi int.
 
       database_root = insert(database_root, num_of_json, name_of_json); 
-      //printf("%s\n",name_of_json2);
+      // printf("%s\n",name_of_json);
     }
   }
-
-  // char *json_filename = "../dataset/camera_specs/2013_camera_specs/buy.net/5372.json";
-  // printf("================================\n");
-  // read_json(json_filename);
-  // printf("================================\n");
-
+  tree_entry* it = database_root;
+  while (it){
+    printf("%s\n",it->path_with_JSON);
+    it = it->right;
+  }
   printf("adding relations\n");
 
   //  read W /*
   w_fp = fopen(w_path, "r");
-  if (w_fp == NULL)
-  {
+  if (w_fp == NULL){
     printf("can't find W file!\n");
   }
   read = getline(&line, &len, w_fp);
   while ((read = getline(&line, &len, w_fp)) != -1)
   {
     // printf("%s",line);
-    part_of_string = strtok(line, "//");
+    // part_of_string = strtok(line, "//");
+    part_of_string = strtok(line, ",");
+    strcpy(json1,part_of_string);
+    strcat(json1,".json");
+    // part_of_string += 1;
+    // printf("%s\n",part_of_string);
+    // json1 = atoi(part_of_string);
+    // part_of_string = strtok(NULL, "//");
     part_of_string = strtok(NULL, ",");
-    part_of_string += 1;
-    json1 = atoi(part_of_string);
-    part_of_string = strtok(NULL, "//");
-    part_of_string = strtok(NULL, ",");
-    part_of_string += 1;
-    json2 = atoi(part_of_string);
+    strcpy(json2,part_of_string);
+    // part_of_string += 1;
+    // printf("%s\n",part_of_string);
+    strcat(json2,".json");
+    // json2 = atoi(part_of_string);
 
     part_of_string = strtok(NULL, "\n");
     relation = atoi(part_of_string);
@@ -116,33 +120,33 @@ int main(void)
     add_relation(database_root, json1, json2, relation);
   }
   printf("all relations added!\n");
-  sleep(1);
-  printf("printing in:\n");
-  for (int i = 0; i < 3; i++)
-  {
-    printf("%d\n", 3 - i);
-    sleep(1);
-  }
+  // sleep(1);
+  // printf("printing in:\n");
+  // for (int i = 0; i < 3; i++)
+  // {
+  //   printf("%d\n", 3 - i);
+  //   sleep(1);
+  // }
 
-  FILE *fp2;
-	char *filename;
+  // FILE *fp2;
+	// char *filename;
 
-	printf("Enter the filename: ");
-	gets(filename); 
+	// printf("Enter the filename: ");
+	// gets(filename); 
 
-	printf("\nCreating %s.csv file", filename);
-	filename = strcat(filename, ".csv");
+	// printf("\nCreating %s.csv file", filename);
+	// filename = strcat(filename, ".csv");
 
-	fp2 = fopen(filename, "w+");
-	fprintf(fp2, "left_spec_id,right_spec_id");
+	// fp2 = fopen(filename, "w+");
+	// fprintf(fp2, "left_spec_id,right_spec_id");
   
   print_all_relations(database_root);
 
-  fclose(fp2);
-	printf("\n%s file has been created.", filename);
-  printf("\n");
+  // fclose(fp2);
+	// printf("\n%s file has been created.", filename);
+  // printf("\n");
 
-  fclose(w_fp);
+  // fclose(w_fp);
   return 0;
 }
 
