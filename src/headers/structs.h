@@ -27,12 +27,9 @@
 //   char *battery;
 // } specs;
 
-typedef struct headBucket
-{
+typedef struct headBucket{
 
   struct bucket *first_bucket;
-  struct specs *product_specs;
-  // int count_identicals;
 
 } headBucket;
 
@@ -53,6 +50,8 @@ typedef struct tree_entry
 
   int json;
   char *path_with_JSON; //www.ebay.com//[spec_number]
+  char *specs;
+
   struct headBucket *headbucket;
 
 } tree_entry;
@@ -60,7 +59,7 @@ typedef struct tree_entry
 
 /* Basic Binary Search tree operatons for our project. */
 int compare(char*, char*);
-tree_entry *insert(tree_entry *, int, char *);
+tree_entry *insert(tree_entry *, int, char *, char*);
 tree_entry *search(tree_entry *, char *);
 // tree_entry *Delete(tree_entry *,int);
 void preorder(tree_entry *);
@@ -80,7 +79,7 @@ int BF(tree_entry *);
  * 
  * Reads and opens each and every json file from each (sub)directory of the dataset directory.
  */
-char** read_json(char *);
+char* read_json(char *);
 
 void printoutarray(char **);
 

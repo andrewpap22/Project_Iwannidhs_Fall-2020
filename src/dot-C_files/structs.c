@@ -26,19 +26,21 @@ int compare(char* a, char* b){
 }
 
 
-tree_entry *insert(tree_entry *T, int x, char *path_with_JSON)
+tree_entry *insert(tree_entry *T, int x, char *path_with_JSON, char* json_specs)
 {
 
 	if (T == NULL){
 
 		T = (tree_entry *)malloc(sizeof(tree_entry));
+
 		T->json = x;
 		T->path_with_JSON = path_with_JSON;
+		T->specs = json_specs;
+
 		T->left = NULL;
 		T->right = NULL;
 
 		T->headbucket = malloc(sizeof(headBucket));
-		/* specs copy edw */
 		T->headbucket->first_bucket = malloc(sizeof(bucket));
 		T->headbucket->first_bucket->next_bucket = NULL;
 		T->headbucket->first_bucket->identical_entries[0] = T;
@@ -48,7 +50,7 @@ tree_entry *insert(tree_entry *T, int x, char *path_with_JSON)
 	else if (compare(path_with_JSON,T->path_with_JSON)==1) // insert in right subtree
 
 	{
-		T->right = insert(T->right, x, path_with_JSON);
+		T->right = insert(T->right, x, path_with_JSON, json_specs);
 		if (BF(T) == -2)
 			// if (x > T->right->json)
 			if (compare(path_with_JSON,T->right->path_with_JSON)==1)
@@ -59,7 +61,7 @@ tree_entry *insert(tree_entry *T, int x, char *path_with_JSON)
 	// else if (x < T->json)
 	else if (compare(path_with_JSON,T->path_with_JSON)==0) // insert in left subtree
 	{
-		T->left = insert(T->left, x, path_with_JSON);
+		T->left = insert(T->left, x, path_with_JSON, json_specs);
 		if (BF(T) == 2)
 			// if (x < T->left->json)
 			if (compare(path_with_JSON,T->left->path_with_JSON)==0)
@@ -262,7 +264,7 @@ void inorder(tree_entry *T)
 	}
 }
 
-char** read_json(char* json_filename)
+char* read_json(char* json_filename)
 {
 	/* --- needed to handle json files --- */
 
@@ -277,10 +279,13 @@ char** read_json(char* json_filename)
 		// struct json_object *camera_type;
 		// struct json_object *color;
 
-		FILE *fp;
-
+	FILE *fp;
+	long file_size;
     fp = fopen(json_filename, "r");
-    fread(buffer, 200000, 1, fp); //read the file and put its contents into the buffer.
+	fseek(fp,0L,SEEK_END);
+	file_size = ftell(fp);
+	// printf("%ld\n",file_size);
+    fread(buffer, file_size, 1, fp); //read the file and put its contents into the buffer.
     fclose(fp);
 
     //parse json's file contents and convert it into json object.
@@ -298,12 +303,17 @@ char** read_json(char* json_filename)
 		// const char *cameraType = json_object_get_string(camera_type);
 		// const char *cameraColor = json_object_get_string(color);
 
-		json_specs = malloc(NO_OF_SPECS * sizeof(char*));
-		for (int i = 0; i < NO_OF_SPECS; i++)
-    {
-			json_specs[i] = malloc(STRING_LENGTH * sizeof(char));
-			strcpy(json_specs[i], (json_object_to_json_string_ext(parsed_json, JSON_C_TO_STRING_PLAIN)));
-		}
+	// json_specs = malloc(NO_OF_SPECS * sizeof(char*));
+	char* specs = malloc(file_size*sizeof(char));
+	// for (int i = 0; i < NO_OF_SPECS; i++){
+	// 	json_specs[i] = malloc(STRING_LENGTH * sizeof(char));
+	// 	strcpy(json_specs[i], (json_object_to_json_string_ext(parsed_json, JSON_C_TO_STRING_PLAIN)));
+	// }
+	strcpy(specs, json_object_to_json_string(parsed_json));
+	// printf("%s\n",specs);
+
+
+
 		// strcpy(json_specs[0], pageTitle);
 		// strcpy(json_specs[1], cameraType);
 		// strcpy(json_specs[2], cameraColor);
@@ -330,7 +340,7 @@ char** read_json(char* json_filename)
 		 * */
 
 
-		return (json_specs);
+		return (specs);
 }
 
 void printoutarray(char **specs)

@@ -20,7 +20,7 @@ int main(void)
   char *name_of_json;
 
   char *full_json_path;
-  char **json_specs; // array of strings (i.e. json specs)
+  char *json_specs;
 
   //read W stuff
   char *w_path = "../dataset/sigmod_large_labelled_dataset.csv";
@@ -33,9 +33,9 @@ int main(void)
   int relation;
   char *part_of_string;
 
+  printf("adding json files to database\n");
   //  read json dataset
-  while ((dir = readdir(dirp)))
-  {
+  while ((dir = readdir(dirp))){
     if (!strcmp(dir->d_name, "."))
     {
       continue;
@@ -72,28 +72,26 @@ int main(void)
       strcat(full_json_path, dir_JSON->d_name);
       //printf("full json path is: %s\n",full_json_path);
 
-      printf("=====================================================================\n");
+      // printf("=====================================================================\n");
       json_specs = read_json(full_json_path);
-      printoutarray(json_specs); // auto to print einai gia testing.. twra pou exoume to array of strings me ola ta specs apo ka8e json arxeio boroume na to pros8esoume mesa sto bucket tou tree!
+      // printf("%s\n",json_specs);
+      // printoutarray(json_specs); // auto to print einai gia testing.. twra pou exoume to array of strings me ola ta specs apo ka8e json arxeio boroume na to pros8esoume mesa sto bucket tou tree!
       //printf("The title of the page is: %s\n",json_spec);
-      printf("=====================================================================\n");
-
-      // printf("name of website is: %s\n",name_of_json);
+      // printf("=====================================================================\n");
 
       num_of_json = atoi(strtok(dir_JSON->d_name, "."));
 
-      database_root = insert(database_root, num_of_json, name_of_json); 
+      database_root = insert(database_root, num_of_json, name_of_json, json_specs); 
       // printf("%s\n",name_of_json);
     }
   }
+  printf("all jsons added\n");
 
-  free(json_specs); //free ton array of strings kai ka8e allocated string mesa se ka8e 8esh tou array.
-
-  tree_entry* it = database_root;
-  while (it){
-    printf("%s\n",it->path_with_JSON);
-    it = it->right;
-  }
+  // tree_entry* it = database_root;
+  // while (it){
+  //   printf("%s\n",it->specs);
+  //   it = it->right;
+  // }
   printf("adding relations...\n");
 
   //  read W /*
@@ -102,30 +100,18 @@ int main(void)
     printf("can't find W file!\n");
   }
   read = getline(&line, &len, w_fp);
-  while ((read = getline(&line, &len, w_fp)) != -1)
-  {
-    // printf("%s",line);
-    // part_of_string = strtok(line, "//");
+  while ((read = getline(&line, &len, w_fp)) != -1){
     part_of_string = strtok(line, ",");
     strcpy(json1,part_of_string);
     strcat(json1,".json");
-    // part_of_string += 1;
-    // printf("%s\n",part_of_string);
-    // json1 = atoi(part_of_string);
-    // part_of_string = strtok(NULL, "//");
     part_of_string = strtok(NULL, ",");
     strcpy(json2,part_of_string);
-    // part_of_string += 1;
-    // printf("%s\n",part_of_string);
     strcat(json2,".json");
-    // json2 = atoi(part_of_string);
-
     part_of_string = strtok(NULL, "\n");
     relation = atoi(part_of_string);
-    // printf("%d, %d, %d\n", json1, json2, relation);
     add_relation(database_root, json1, json2, relation);
   }
-  printf("All relations are added!!!\n");
+  printf("All relations are added\n");
   // sleep(1);
   // printf("printing in:\n");
   // for (int i = 0; i < 3; i++)
