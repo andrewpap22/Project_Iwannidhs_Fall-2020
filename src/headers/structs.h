@@ -15,16 +15,17 @@
 
 #define BUCKETSIZE 200
 
-typedef struct specs
-{
+/* no need for that struct anymore */
+// typedef struct specs
+// {
 
-  char *page_title;
-  char *brand;
-  char *dimension;
-  char *display;
-  char *pixels;
-  char *battery;
-} specs;
+//   char *page_title;
+//   char *brand;
+//   char *dimension;
+//   char *display;
+//   char *pixels;
+//   char *battery;
+// } specs;
 
 typedef struct headBucket
 {
