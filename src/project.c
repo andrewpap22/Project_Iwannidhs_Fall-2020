@@ -134,6 +134,9 @@ int main(void)
   
   print_all_relations(database_root);
 
+  //delete the tree
+  free_node(database_root);
+  
   // fclose(fp2);
 	// printf("\n%s file has been created.", filename);
   // printf("\n");

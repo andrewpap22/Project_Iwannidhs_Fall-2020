@@ -264,6 +264,16 @@ void inorder(tree_entry *T)
 	}
 }
 
+void free_node(tree_entry *T){
+	if (T){
+		free(T->specs);
+		free(T->path_with_JSON);
+		free_node(T->left);
+		free_node(T->right);
+		free(T);
+	}
+}
+
 char* read_json(char* json_filename)
 {
 	/* --- needed to handle json files --- */

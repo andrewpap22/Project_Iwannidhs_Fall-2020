@@ -64,6 +64,7 @@ tree_entry *search(tree_entry *, char *);
 // tree_entry *Delete(tree_entry *,int);
 void preorder(tree_entry *);
 void inorder(tree_entry *);
+void free_node(tree_entry *);
 int height(tree_entry *);
 tree_entry *rotateright(tree_entry *);
 tree_entry *rotateleft(tree_entry *);
