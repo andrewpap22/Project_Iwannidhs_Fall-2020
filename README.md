@@ -83,7 +83,7 @@ We have:
 ```C++
 void insert_entry(tree_entry *entry, bucket* first_bucket);
 ```
-who's responsible for adding our .json files inside our tree. <br>
+who's responsible for adding the pointers (relations) inside the buckets of the tree. <br>
 ```C++
 void add_relation(tree_entry* root, char* json1, char* json2, int relation);
 ```
