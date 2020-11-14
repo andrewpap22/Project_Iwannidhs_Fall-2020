@@ -262,25 +262,62 @@ void inorder(tree_entry *T)
 	}
 }
 
-void read_json(char* json_filename)
+char** read_json(char* json_filename)
 {
 	/* --- needed to handle json files --- */
 
-    char buffer[20000]; // store contents of json files
+    char buffer[200000]; // stores contents of json files
+		const int STRING_LENGTH = 100000;
+		const int NO_OF_SPECS = 2;
+		char **json_specs; // array of strings (json specs: page title, camera type, color, etc...)
+
     struct json_object *parsed_json; // this holds the entire json document
     struct json_object *page_title; // needed to read page title of jsons.
+		struct json_object *camera_type;
+		struct json_object *color;
+
 		FILE *fp;
 
     fp = fopen(json_filename, "r");
-    fread(buffer, 20000, 1, fp); //read the file and put its contents into the buffer.
+    fread(buffer, 200000, 1, fp); //read the file and put its contents into the buffer.
     fclose(fp);
 
     //parse json's file contents and convert it into json object.
     parsed_json = json_tokener_parse(buffer);
 
-    //get the value of the key from json object (in our case the page_title only)
+    //get the value of the key from json object
     json_object_object_get_ex(parsed_json, "<page title>", &page_title);
+		json_object_object_get_ex(parsed_json, "camera type", &camera_type);
+		json_object_object_get_ex(parsed_json, "color", &color);
+
+		const char *pageTitle = json_object_get_string(page_title);
+		const char *cameraType = json_object_get_string(camera_type);
+		const char *cameraColor = json_object_get_string(color);
+
+		json_specs = malloc(NO_OF_SPECS * sizeof(char*));
+		for (int i = 0; i < NO_OF_SPECS; i++)
+    {
+			json_specs[i] = malloc(STRING_LENGTH * sizeof(char));
+		}
+		// strcpy(json_specs[0], pageTitle);
+		// strcpy(json_specs[1], cameraType);
+		// strcpy(json_specs[2], cameraColor);
 
     //print the above value that we got to check correctness
-    printf("<page title> : %s\n", json_object_get_string(page_title));
+    //printf("<page title> : %s\n", json_object_get_string(page_title));
+
+		return (json_specs);
+}
+
+void printoutarray(char **specs)
+{
+  // for (int i = 0; i < 3; ++i) {
+  //       char *pos = specs[i];
+  //       while (*pos != '\0') {
+  //           printf("%c\n", *(pos++));
+  //       }
+  //       printf("\n");
+  //   }
+	printf("Page title is: %s\n",specs[0]);
+	printf("Camera type is: %s\n",specs[1]);
 }

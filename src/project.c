@@ -20,6 +20,7 @@ int main(void)
   char *name_of_json;
 
   char *full_json_path;
+  char **json_specs; // array of strings (i.e. json specs)
 
   //read W stuff
   char *w_path = "../dataset/sigmod_large_labelled_dataset.csv";
@@ -71,24 +72,30 @@ int main(void)
       strcat(full_json_path, dir_JSON->d_name);
       //printf("full json path is: %s\n",full_json_path);
 
-      // printf("================================\n");
-      // read_json(full_json_path);
-      // printf("================================\n");
+      printf("================================\n");
+      json_specs = read_json(full_json_path);
+      printoutarray(json_specs);
+      //printf("The title of the page is: %s\n",json_spec);
+      printf("================================\n");
 
       // printf("name of website is: %s\n",name_of_json);
 
-      num_of_json = atoi(strtok(dir_JSON->d_name, ".")); //auto edw einai pou prepei na ginei string kai oxi int.
+      num_of_json = atoi(strtok(dir_JSON->d_name, "."));
 
       database_root = insert(database_root, num_of_json, name_of_json); 
       // printf("%s\n",name_of_json);
     }
+    free(json_specs);
   }
+
+  //free(json_specs); // free the allocated array of strings.
+
   tree_entry* it = database_root;
   while (it){
     printf("%s\n",it->path_with_JSON);
     it = it->right;
   }
-  printf("adding relations\n");
+  printf("adding relations...\n");
 
   //  read W /*
   w_fp = fopen(w_path, "r");
@@ -119,7 +126,7 @@ int main(void)
     // printf("%d, %d, %d\n", json1, json2, relation);
     add_relation(database_root, json1, json2, relation);
   }
-  printf("all relations added!\n");
+  printf("All relations are added!!!\n");
   // sleep(1);
   // printf("printing in:\n");
   // for (int i = 0; i < 3; i++)
@@ -151,7 +158,4 @@ int main(void)
 }
 
 
-// menei na ftiaksw tin read json (etoimh check!)
-// menei na allaksw to int se string pou pername mesa stin insert sto dentro kai na xrhsimopoihsw gia tis sugkriseis
-// tin sunarthsh pou mou edwse o allos sto discord
-// kai telos menei na printarw ta apotelesmata sto csv arxeio.
+/* =============== menei mono na tupwnoume ta apotelesmata sto csv arxeio kai oxi sto stdout ================ */

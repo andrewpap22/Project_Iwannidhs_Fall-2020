@@ -80,6 +80,8 @@ int BF(tree_entry *);
  * 
  * Reads and opens each and every json file from each (sub)directory of the dataset directory.
  */
-void read_json(char *);
+char** read_json(char *);
+
+void printoutarray(char **);
 
 #endif /* STRUCTS_H */
