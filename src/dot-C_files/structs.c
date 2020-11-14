@@ -267,14 +267,15 @@ char** read_json(char* json_filename)
 	/* --- needed to handle json files --- */
 
     char buffer[200000]; // stores contents of json files
-		const int STRING_LENGTH = 100000;
-		const int NO_OF_SPECS = 3;
+
+		const int STRING_LENGTH = 1000000;
+		const int NO_OF_SPECS = 1;
 		char **json_specs; // array of strings (json specs: page title, camera type, color, etc...)
 
     struct json_object *parsed_json; // this holds the entire json document
-    struct json_object *page_title; // needed to read page title of jsons.
-		struct json_object *camera_type;
-		struct json_object *color;
+    // struct json_object *page_title; // needed to read page title of jsons.
+		// struct json_object *camera_type;
+		// struct json_object *color;
 
 		FILE *fp;
 
@@ -285,34 +286,43 @@ char** read_json(char* json_filename)
     //parse json's file contents and convert it into json object.
     parsed_json = json_tokener_parse(buffer);
 
-    //get the value of the key from json object
-    json_object_object_get_ex(parsed_json, "<page title>", &page_title);
-		json_object_object_get_ex(parsed_json, "brand", &camera_type);
-		json_object_object_get_ex(parsed_json, "dimension", &color);
+		/* pairnei olo to json object apo panw kai to metatrepei se string kai to printarei. */
+		//printf("%s\n",json_object_to_json_string_ext(parsed_json,JSON_C_TO_STRING_PLAIN)); 
 
-		const char *pageTitle = json_object_get_string(page_title);
-		const char *cameraType = json_object_get_string(camera_type);
-		const char *cameraColor = json_object_get_string(color);
+    //get the value of the key from json object
+    // json_object_object_get_ex(parsed_json, "<page title>", &page_title);
+		// json_object_object_get_ex(parsed_json, "brand", &camera_type);
+		// json_object_object_get_ex(parsed_json, "dimension", &color);
+
+		// const char *pageTitle = json_object_get_string(page_title);
+		// const char *cameraType = json_object_get_string(camera_type);
+		// const char *cameraColor = json_object_get_string(color);
 
 		json_specs = malloc(NO_OF_SPECS * sizeof(char*));
 		for (int i = 0; i < NO_OF_SPECS; i++)
     {
 			json_specs[i] = malloc(STRING_LENGTH * sizeof(char));
+			strcpy(json_specs[i], (json_object_to_json_string_ext(parsed_json, JSON_C_TO_STRING_PLAIN)));
 		}
 		// strcpy(json_specs[0], pageTitle);
 		// strcpy(json_specs[1], cameraType);
 		// strcpy(json_specs[2], cameraColor);
 
     //print the above value that we got to check correctness
-    printf("<page title> : %s\n", pageTitle);
-		printf("camera type : %s\n", cameraType);
-		printf("camera color : %s\n", cameraColor);
+    // printf("<page title> : %s\n", pageTitle);
+		// printf("camera type : %s\n", cameraType);
+		// printf("camera color : %s\n", cameraColor);
+
+		
 
 		/* poio einai to provlhma: den exoun ola ta json files tin idia onomasia sta specs. Opote den borw na kanw hardcode ena ena
 		 * opws exw kanei apo panw ta specs giati uparxoyn periptwseis opou h json_object_get_string 8a gurisei null
 		 * epeidh den 8a vrei to antistoixo json spec pou ths dinw. me apotelesma parakatw sto array na pernaei null anti gia string
 		 * kai na trwei segmentation. 
-		 * Ara, prepei na vrw tropo na pernaei oloklhro to json spec ws 1 string anti gia ena ena ka8e spec ksexwrista...*/
+		 * Ara, prepei na vrw tropo na pernaei oloklhro to json spec ws 1 string anti gia ena ena ka8e spec ksexwrista...
+		 * ====================== ETOIMO!!!!!!!!!!!! ===========================
+		 * akrivws auto pou periegrapsa ginetai me polu aplo tropo me tin json_object_to_json_string_ext pou exw xrhsimopoihsei apo panw!!!*/
+
 
 		return (json_specs);
 }
@@ -326,7 +336,5 @@ void printoutarray(char **specs)
   //       }
   //       printf("\n");
   //   }
-	printf("Page title is: %s\n",specs[0]);
-	printf("Camera type is: %s\n",specs[1]);
-	printf("Camera Color is: %s\n",specs[2]);
+	printf("%s\n",specs[0]);
 }

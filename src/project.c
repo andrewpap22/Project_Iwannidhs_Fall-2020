@@ -72,11 +72,11 @@ int main(void)
       strcat(full_json_path, dir_JSON->d_name);
       //printf("full json path is: %s\n",full_json_path);
 
-      printf("================================\n");
+      printf("=====================================================================\n");
       json_specs = read_json(full_json_path);
-      //printoutarray(json_specs);
+      printoutarray(json_specs); // auto to print einai gia testing.. twra pou exoume to array of strings me ola ta specs apo ka8e json arxeio boroume na to pros8esoume mesa sto bucket tou tree!
       //printf("The title of the page is: %s\n",json_spec);
-      printf("================================\n");
+      printf("=====================================================================\n");
 
       // printf("name of website is: %s\n",name_of_json);
 
@@ -86,6 +86,8 @@ int main(void)
       // printf("%s\n",name_of_json);
     }
   }
+
+  free(json_specs); //free ton array of strings kai ka8e allocated string mesa se ka8e 8esh tou array.
 
   tree_entry* it = database_root;
   while (it){
@@ -144,7 +146,7 @@ int main(void)
 	// fp2 = fopen(filename, "w+");
 	// fprintf(fp2, "left_spec_id,right_spec_id");
   
-  //print_all_relations(database_root);
+  print_all_relations(database_root);
 
   // fclose(fp2);
 	// printf("\n%s file has been created.", filename);
@@ -155,4 +157,4 @@ int main(void)
 }
 
 
-/* =============== menei mono na tupwnoume ta apotelesmata sto csv arxeio kai oxi sto stdout ================ */
+/* =============== menei mono na tupwnoume ta apotelesmata sto csv arxeio kai oxi sto stdout!!! ================ */
