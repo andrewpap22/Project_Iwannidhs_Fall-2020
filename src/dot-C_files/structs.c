@@ -313,7 +313,7 @@ char** read_json(char* json_filename)
 		// printf("camera type : %s\n", cameraType);
 		// printf("camera color : %s\n", cameraColor);
 
-		
+
 
 		/* poio einai to provlhma: den exoun ola ta json files tin idia onomasia sta specs. Opote den borw na kanw hardcode ena ena
 		 * opws exw kanei apo panw ta specs giati uparxoyn periptwseis opou h json_object_get_string 8a gurisei null
@@ -321,7 +321,13 @@ char** read_json(char* json_filename)
 		 * kai na trwei segmentation. 
 		 * Ara, prepei na vrw tropo na pernaei oloklhro to json spec ws 1 string anti gia ena ena ka8e spec ksexwrista...
 		 * ====================== ETOIMO!!!!!!!!!!!! ===========================
-		 * akrivws auto pou periegrapsa ginetai me polu aplo tropo me tin json_object_to_json_string_ext pou exw xrhsimopoihsei apo panw!!!*/
+		 * akrivws auto pou periegrapsa ginetai me polu aplo tropo me tin json_object_to_json_string_ext pou exw xrhsimopoihsei apo panw!!!
+		 * 
+		 * references: 
+		 * https://alan-mushi.github.io/2014/10/28/json-c-tutorial-part-1.html
+		 * https://stackoverflow.com/questions/4085372/how-to-return-a-string-array-from-a-function/11543552
+		 * https://json-c.github.io/json-c/json-c-0.10/doc/html/json__object_8h.html#a84421dab94ccad42e901e534c6d7b658
+		 * */
 
 
 		return (json_specs);
