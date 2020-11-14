@@ -268,7 +268,7 @@ char** read_json(char* json_filename)
 
     char buffer[200000]; // stores contents of json files
 		const int STRING_LENGTH = 100000;
-		const int NO_OF_SPECS = 2;
+		const int NO_OF_SPECS = 3;
 		char **json_specs; // array of strings (json specs: page title, camera type, color, etc...)
 
     struct json_object *parsed_json; // this holds the entire json document
@@ -287,8 +287,8 @@ char** read_json(char* json_filename)
 
     //get the value of the key from json object
     json_object_object_get_ex(parsed_json, "<page title>", &page_title);
-		json_object_object_get_ex(parsed_json, "camera type", &camera_type);
-		json_object_object_get_ex(parsed_json, "color", &color);
+		json_object_object_get_ex(parsed_json, "brand", &camera_type);
+		json_object_object_get_ex(parsed_json, "dimension", &color);
 
 		const char *pageTitle = json_object_get_string(page_title);
 		const char *cameraType = json_object_get_string(camera_type);
@@ -304,7 +304,15 @@ char** read_json(char* json_filename)
 		// strcpy(json_specs[2], cameraColor);
 
     //print the above value that we got to check correctness
-    //printf("<page title> : %s\n", json_object_get_string(page_title));
+    printf("<page title> : %s\n", pageTitle);
+		printf("camera type : %s\n", cameraType);
+		printf("camera color : %s\n", cameraColor);
+
+		/* poio einai to provlhma: den exoun ola ta json files tin idia onomasia sta specs. Opote den borw na kanw hardcode ena ena
+		 * opws exw kanei apo panw ta specs giati uparxoyn periptwseis opou h json_object_get_string 8a gurisei null
+		 * epeidh den 8a vrei to antistoixo json spec pou ths dinw. me apotelesma parakatw sto array na pernaei null anti gia string
+		 * kai na trwei segmentation. 
+		 * Ara, prepei na vrw tropo na pernaei oloklhro to json spec ws 1 string anti gia ena ena ka8e spec ksexwrista...*/
 
 		return (json_specs);
 }
@@ -320,4 +328,5 @@ void printoutarray(char **specs)
   //   }
 	printf("Page title is: %s\n",specs[0]);
 	printf("Camera type is: %s\n",specs[1]);
+	printf("Camera Color is: %s\n",specs[2]);
 }

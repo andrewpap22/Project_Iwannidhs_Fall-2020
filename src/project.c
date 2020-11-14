@@ -74,7 +74,7 @@ int main(void)
 
       printf("================================\n");
       json_specs = read_json(full_json_path);
-      printoutarray(json_specs);
+      //printoutarray(json_specs);
       //printf("The title of the page is: %s\n",json_spec);
       printf("================================\n");
 
@@ -85,10 +85,7 @@ int main(void)
       database_root = insert(database_root, num_of_json, name_of_json); 
       // printf("%s\n",name_of_json);
     }
-    free(json_specs);
   }
-
-  //free(json_specs); // free the allocated array of strings.
 
   tree_entry* it = database_root;
   while (it){
@@ -147,7 +144,7 @@ int main(void)
 	// fp2 = fopen(filename, "w+");
 	// fprintf(fp2, "left_spec_id,right_spec_id");
   
-  print_all_relations(database_root);
+  //print_all_relations(database_root);
 
   // fclose(fp2);
 	// printf("\n%s file has been created.", filename);
