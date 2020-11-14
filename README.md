@@ -77,8 +77,58 @@ Our program, checks (as requested from the project description) the files with e
 
 ## Details
 
+Following the path: <br>
+**src** ~> **dot-C_files** ~> *W_handler.c* <br>
+We have: 
+```C++
+void insert_entry(tree_entry *entry, bucket* first_bucket);
+```
+who's responsible for adding our .json files inside our tree. <br>
+```C++
+void add_relation(tree_entry* root, char* json1, char* json2, int relation);
+```
+who's responsible for comparing the specs of the .json files and add their relation *(the ones that are the same)* to our linked list of buckets. <br>
+```C++
+void print_node_relations(tree_entry* node);
+```
+who's responsible for printing out into the .csv all the specs that consist of the same commodity. <br><br>
 
+Inside: <br>
+**src** ~> **dot-C_files** ~> *structs.c* <br>
+We have implemented our data structures described above and whatever helper function we needed and they consist of the following: <br>
+
+- Helper function that compares our string to be inserted in the tree
+  - *returns 0 if a is smaller, 1 if its bigger, 3 if they are the same (should never return 3)*
+```C++
+int compare(char* a, char* b);
+```
+- The data structures and their operations:
+```C++
+tree_entry *insert(tree_entry *T, int x, char *path_with_JSON, char* json_specs);
+tree_entry *search(tree_entry *T, char* x);
+tree_entry *Delete(tree_entry *T,int x);
+int height(tree_entry *T);
+tree_entry *rotateright(tree_entry *x);
+tree_entry *rotateleft(tree_entry *x);
+tree_entry *RR(tree_entry *T);
+tree_entry *LL(tree_entry *T);
+tree_entry *LR(tree_entry *T);
+tree_entry *RL(tree_entry *T);
+int BF(tree_entry *T);
+void preorder(tree_entry *T);
+void inorder(tree_entry *T);
+```
+- Helper Function to read and store the contents of the json files.
+  - *It takes as input a .json file it parses the json object of each and every file and then converts it into a C string format, it stores that string by allocating proper memory (the size of each json object) and then stores it into our tree buckets*
+```C++
+char* read_json(char* json_filename);
+```
 
 <hr>
 
-:copyright: <a href="mailto:sdi1400126@di.uoa.gr">Konstantina Nika</a>, <a href="mailto:sdi1400176@di.uoa.gr">Nikitas Sakkas</a>, <a href="mailto:sdi1500201@di.uoa.gr">Andrew Pappas</a>, 2020 - 2021, All Rights Reserved.
+- *The code is thoroughly commented wherever needed for it's better comprehension.*
+- **Thank you!** 😄 
+<hr>
+
+<a href="mailto:sdi1400176@di.uoa.gr">🧑 Nikitas Sakkas</a>, <a href="mailto:sdi1500201@di.uoa.gr">🧔 Andrew Pappas</a>, <a href="mailto:sdi1400126@di.uoa.gr">👩 Konstantina Nika</a> <br>
+:copyright: 2020 - 2021, All Rights Reserved.
