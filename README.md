@@ -45,6 +45,10 @@ $ make
 ### Execution:
 ```
 $ ./project1 ../dataset/sigmod_large_labelled_dataset.csv
+
+  or
+
+$ ./project1 ../dataset/sigmod_medium_labelled_dataset.csv  
 ```
 
 **(Execution time on large dataset = 3sec)**
