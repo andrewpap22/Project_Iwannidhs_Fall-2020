@@ -1,35 +1,43 @@
 #include "../headers/structs.h"
 
-int compare(char* a, char* b){
+int compare(char *a, char *b)
+{
 	//returns 0 if a is smaller, 1 if its bigger, 3 if they are the same (should never return 3)
-    int i=0;
-    while(1){
-        if(i<strlen(a) && i<strlen(b)){
-            if(*(a+i)<*(b+i)){
-                return 0;
-            }
-			else if(*(a+i)>*(b+i)){
-                return 1;
-            }
-        }
-        else if(i==strlen(a) && i!=strlen(b)){
-            return 0;
-        }
-        else if(i==strlen(b) && i!=strlen(a)){
-            return 1;
-        }
-        else{
-            return 3;
-        }
-    i++;
-    }
+	int i = 0;
+	while (1)
+	{
+		if (i < strlen(a) && i < strlen(b))
+		{
+			if (*(a + i) < *(b + i))
+			{
+				return 0;
+			}
+			else if (*(a + i) > *(b + i))
+			{
+				return 1;
+			}
+		}
+		else if (i == strlen(a) && i != strlen(b))
+		{
+			return 0;
+		}
+		else if (i == strlen(b) && i != strlen(a))
+		{
+			return 1;
+		}
+		else
+		{
+			return 3;
+		}
+		i++;
+	}
 }
 
-
-tree_entry *insert(tree_entry *T, int x, char *path_with_JSON, char* json_specs)
+tree_entry *insert(tree_entry *T, int x, char *path_with_JSON, char *json_specs)
 {
 
-	if (T == NULL){
+	if (T == NULL)
+	{
 
 		T = (tree_entry *)malloc(sizeof(tree_entry));
 
@@ -47,24 +55,24 @@ tree_entry *insert(tree_entry *T, int x, char *path_with_JSON, char* json_specs)
 		T->headbucket->first_bucket->numofentries = 1;
 	}
 	// else if (x > T->json) // insert in right subtree
-	else if (compare(path_with_JSON,T->path_with_JSON)==1) // insert in right subtree
+	else if (compare(path_with_JSON, T->path_with_JSON) == 1) // insert in right subtree
 
 	{
 		T->right = insert(T->right, x, path_with_JSON, json_specs);
 		if (BF(T) == -2)
 			// if (x > T->right->json)
-			if (compare(path_with_JSON,T->right->path_with_JSON)==1)
+			if (compare(path_with_JSON, T->right->path_with_JSON) == 1)
 				T = RR(T);
 			else
 				T = RL(T);
 	}
 	// else if (x < T->json)
-	else if (compare(path_with_JSON,T->path_with_JSON)==0) // insert in left subtree
+	else if (compare(path_with_JSON, T->path_with_JSON) == 0) // insert in left subtree
 	{
 		T->left = insert(T->left, x, path_with_JSON, json_specs);
 		if (BF(T) == 2)
 			// if (x < T->left->json)
-			if (compare(path_with_JSON,T->left->path_with_JSON)==0)
+			if (compare(path_with_JSON, T->left->path_with_JSON) == 0)
 				T = LL(T);
 			else
 				T = LR(T);
@@ -75,19 +83,19 @@ tree_entry *insert(tree_entry *T, int x, char *path_with_JSON, char* json_specs)
 	return (T);
 }
 
-tree_entry *search(tree_entry *T, char* x)
+tree_entry *search(tree_entry *T, char *x)
 {
 	if (T == NULL)
 	{
 		return NULL;
 	}
 	// if (x > T->json)
-	if (compare(x,T->path_with_JSON)==1)
+	if (compare(x, T->path_with_JSON) == 1)
 	{
 		return (search(T->right, x));
 	}
 	// else if (x < T->json)
-	else if (compare(x,T->path_with_JSON)==0)
+	else if (compare(x, T->path_with_JSON) == 0)
 	{
 		return (search(T->left, x));
 	}
@@ -264,8 +272,10 @@ void inorder(tree_entry *T)
 	}
 }
 
-void free_node(tree_entry *T){
-	if (T){
+void free_node(tree_entry *T)
+{
+	if (T)
+	{
 		free(T->specs);
 		free(T->path_with_JSON);
 		free_node(T->left);
@@ -274,93 +284,28 @@ void free_node(tree_entry *T){
 	}
 }
 
-char* read_json(char* json_filename)
+char *read_json(char *json_filename)
 {
 	/* --- needed to handle json files --- */
 
-    char buffer[200000]; // stores contents of json files
+	char buffer[200000]; // stores contents of json files
 
-		const int STRING_LENGTH = 1000000;
-		const int NO_OF_SPECS = 1;
-		char **json_specs; // array of strings (json specs: page title, camera type, color, etc...)
-
-    struct json_object *parsed_json; // this holds the entire json document
-    // struct json_object *page_title; // needed to read page title of jsons.
-		// struct json_object *camera_type;
-		// struct json_object *color;
+	struct json_object *parsed_json; // this holds the entire json document
 
 	FILE *fp;
 	long file_size;
-    fp = fopen(json_filename, "r");
-	fseek(fp,0L,SEEK_END);
-	file_size = ftell(fp);
-	// printf("%ld\n",file_size);
-    fread(buffer, file_size, 1, fp); //read the file and put its contents into the buffer.
-    fclose(fp);
+	fp = fopen(json_filename, "r"); // open and read json files.
+	fseek(fp, 0L, SEEK_END);
+	file_size = ftell(fp); // determine the file size of each and every json file to allocate proper memory.
 
-    //parse json's file contents and convert it into json object.
-    parsed_json = json_tokener_parse(buffer);
+	fread(buffer, file_size, 1, fp); //read the file and put its contents into the buffer.
+	fclose(fp);
 
-		/* pairnei olo to json object apo panw kai to metatrepei se string kai to printarei. */
-		//printf("%s\n",json_object_to_json_string_ext(parsed_json,JSON_C_TO_STRING_PLAIN)); 
+	//parse json's file contents and convert it into json object.
+	parsed_json = json_tokener_parse(buffer);
 
-    //get the value of the key from json object
-    // json_object_object_get_ex(parsed_json, "<page title>", &page_title);
-		// json_object_object_get_ex(parsed_json, "brand", &camera_type);
-		// json_object_object_get_ex(parsed_json, "dimension", &color);
+	char *specs = malloc(file_size * sizeof(char));
+	strcpy(specs, json_object_to_json_string(parsed_json)); // stringify the json object and store it as a single string.
 
-		// const char *pageTitle = json_object_get_string(page_title);
-		// const char *cameraType = json_object_get_string(camera_type);
-		// const char *cameraColor = json_object_get_string(color);
-
-	// json_specs = malloc(NO_OF_SPECS * sizeof(char*));
-	char* specs = malloc(file_size*sizeof(char));
-	// for (int i = 0; i < NO_OF_SPECS; i++){
-	// 	json_specs[i] = malloc(STRING_LENGTH * sizeof(char));
-	// 	strcpy(json_specs[i], (json_object_to_json_string_ext(parsed_json, JSON_C_TO_STRING_PLAIN)));
-	// }
-	strcpy(specs, json_object_to_json_string(parsed_json));
-	// printf("%s\n",specs);
-
-
-
-		// strcpy(json_specs[0], pageTitle);
-		// strcpy(json_specs[1], cameraType);
-		// strcpy(json_specs[2], cameraColor);
-
-    //print the above value that we got to check correctness
-    // printf("<page title> : %s\n", pageTitle);
-		// printf("camera type : %s\n", cameraType);
-		// printf("camera color : %s\n", cameraColor);
-
-
-
-		/* poio einai to provlhma: den exoun ola ta json files tin idia onomasia sta specs. Opote den borw na kanw hardcode ena ena
-		 * opws exw kanei apo panw ta specs giati uparxoyn periptwseis opou h json_object_get_string 8a gurisei null
-		 * epeidh den 8a vrei to antistoixo json spec pou ths dinw. me apotelesma parakatw sto array na pernaei null anti gia string
-		 * kai na trwei segmentation. 
-		 * Ara, prepei na vrw tropo na pernaei oloklhro to json spec ws 1 string anti gia ena ena ka8e spec ksexwrista...
-		 * ====================== ETOIMO!!!!!!!!!!!! ===========================
-		 * akrivws auto pou periegrapsa ginetai me polu aplo tropo me tin json_object_to_json_string_ext pou exw xrhsimopoihsei apo panw!!!
-		 * 
-		 * references: 
-		 * https://alan-mushi.github.io/2014/10/28/json-c-tutorial-part-1.html
-		 * https://stackoverflow.com/questions/4085372/how-to-return-a-string-array-from-a-function/11543552
-		 * https://json-c.github.io/json-c/json-c-0.10/doc/html/json__object_8h.html#a84421dab94ccad42e901e534c6d7b658
-		 * */
-
-
-		return (specs);
-}
-
-void printoutarray(char **specs)
-{
-  // for (int i = 0; i < 3; ++i) {
-  //       char *pos = specs[i];
-  //       while (*pos != '\0') {
-  //           printf("%c\n", *(pos++));
-  //       }
-  //       printf("\n");
-  //   }
-	printf("%s\n",specs[0]);
+	return (specs); // return the stringified version of the json object of each and every .json file.
 }

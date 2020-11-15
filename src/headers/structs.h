@@ -15,19 +15,8 @@
 
 #define BUCKETSIZE 200
 
-/* no need for that struct anymore */
-// typedef struct specs
-// {
-
-//   char *page_title;
-//   char *brand;
-//   char *dimension;
-//   char *display;
-//   char *pixels;
-//   char *battery;
-// } specs;
-
-typedef struct headBucket{
+typedef struct headBucket
+{
 
   struct bucket *first_bucket;
 
@@ -56,10 +45,9 @@ typedef struct tree_entry
 
 } tree_entry;
 
-
 /* Basic Binary Search tree operatons for our project. */
-int compare(char*, char*);
-tree_entry *insert(tree_entry *, int, char *, char*);
+int compare(char *, char *);
+tree_entry *insert(tree_entry *, int, char *, char *);
 tree_entry *search(tree_entry *, char *);
 // tree_entry *Delete(tree_entry *,int);
 void preorder(tree_entry *);
@@ -79,9 +67,12 @@ int BF(tree_entry *);
  * we need to compile with: -ljson-c
  * 
  * Reads and opens each and every json file from each (sub)directory of the dataset directory.
+ *  
+ * References: 
+ * https://alan-mushi.github.io/2014/10/28/json-c-tutorial-part-1.html
+ * https://stackoverflow.com/questions/4085372/how-to-return-a-string-array-from-a-function/11543552
+ * https://json-c.github.io/json-c/json-c-0.10/doc/html/json__object_8h.html#a84421dab94ccad42e901e534c6d7b658
  */
-char* read_json(char *);
-
-void printoutarray(char **);
+char *read_json(char *);
 
 #endif /* STRUCTS_H */
