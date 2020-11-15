@@ -29,6 +29,7 @@
     </ul>
     <p>📄 makefile</p>
     <p>📄 project.c</p>
+    <p>📄 output.csv</p>
   </li>
   <li>
     <a href="https://github.com/andrewpap22/Project_Iwannidhs_Fall-2020/tree/master/valgrind_output">📂 valgrind_output</a>
