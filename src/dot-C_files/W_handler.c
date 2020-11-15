@@ -28,7 +28,6 @@ void insert_entry(tree_entry *entry, bucket *first_bucket)
 	}
 }
 
-// }
 void add_relation(tree_entry *root, char *json1, char *json2, int relation)
 {
 	if (relation == 1)
