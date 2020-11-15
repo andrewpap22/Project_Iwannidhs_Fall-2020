@@ -112,13 +112,6 @@ int main(void)
     add_relation(database_root, json1, json2, relation);
   }
   printf("All relations are added\n");
-  // sleep(1);
-  // printf("printing in:\n");
-  // for (int i = 0; i < 3; i++)
-  // {
-  //   printf("%d\n", 3 - i);
-  //   sleep(1);
-  // }
 
   // FILE *fp2;
 	// char *filename;
@@ -136,6 +129,8 @@ int main(void)
 
   //delete the tree
   free_node(database_root);
+  printf("Shutting Down\n");
+
   
   // fclose(fp2);
 	// printf("\n%s file has been created.", filename);

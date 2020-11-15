@@ -1,5 +1,7 @@
 #include "../headers/structs.h"
 
+int node_num = 0;
+
 int compare(char* a, char* b){
 	//returns 0 if a is smaller, 1 if its bigger, 3 if they are the same (should never return 3)
     int i=0;
@@ -264,15 +266,25 @@ void inorder(tree_entry *T)
 	}
 }
 
+void free_list_of_buckets(bucket* B){
+	if (B!=NULL){
+		free_list_of_buckets(B->next_bucket);
+		free(B);
+	}
+}
+
 void free_node(tree_entry *T){
 	if (T){
 		free(T->specs);
 		free(T->path_with_JSON);
+		free_list_of_buckets(T->headbucket->first_bucket);
+		T->headbucket->first_bucket=NULL;
 		free_node(T->left);
 		free_node(T->right);
 		free(T);
 	}
 }
+
 
 char* read_json(char* json_filename)
 {
@@ -280,69 +292,23 @@ char* read_json(char* json_filename)
 
     char buffer[200000]; // stores contents of json files
 
-		const int STRING_LENGTH = 1000000;
-		const int NO_OF_SPECS = 1;
-		char **json_specs; // array of strings (json specs: page title, camera type, color, etc...)
-
     struct json_object *parsed_json; // this holds the entire json document
-    // struct json_object *page_title; // needed to read page title of jsons.
-		// struct json_object *camera_type;
-		// struct json_object *color;
 
 	FILE *fp;
 	long file_size;
     fp = fopen(json_filename, "r");
 	fseek(fp,0L,SEEK_END);
 	file_size = ftell(fp);
-	// printf("%ld\n",file_size);
     fread(buffer, file_size, 1, fp); //read the file and put its contents into the buffer.
     fclose(fp);
 
     //parse json's file contents and convert it into json object.
     parsed_json = json_tokener_parse(buffer);
-
-		/* pairnei olo to json object apo panw kai to metatrepei se string kai to printarei. */
-		//printf("%s\n",json_object_to_json_string_ext(parsed_json,JSON_C_TO_STRING_PLAIN)); 
-
-    //get the value of the key from json object
-    // json_object_object_get_ex(parsed_json, "<page title>", &page_title);
-		// json_object_object_get_ex(parsed_json, "brand", &camera_type);
-		// json_object_object_get_ex(parsed_json, "dimension", &color);
-
-		// const char *pageTitle = json_object_get_string(page_title);
-		// const char *cameraType = json_object_get_string(camera_type);
-		// const char *cameraColor = json_object_get_string(color);
-
-	// json_specs = malloc(NO_OF_SPECS * sizeof(char*));
 	char* specs = malloc(file_size*sizeof(char));
-	// for (int i = 0; i < NO_OF_SPECS; i++){
-	// 	json_specs[i] = malloc(STRING_LENGTH * sizeof(char));
-	// 	strcpy(json_specs[i], (json_object_to_json_string_ext(parsed_json, JSON_C_TO_STRING_PLAIN)));
-	// }
+
 	strcpy(specs, json_object_to_json_string(parsed_json));
-	// printf("%s\n",specs);
 
-
-
-		// strcpy(json_specs[0], pageTitle);
-		// strcpy(json_specs[1], cameraType);
-		// strcpy(json_specs[2], cameraColor);
-
-    //print the above value that we got to check correctness
-    // printf("<page title> : %s\n", pageTitle);
-		// printf("camera type : %s\n", cameraType);
-		// printf("camera color : %s\n", cameraColor);
-
-
-
-		/* poio einai to provlhma: den exoun ola ta json files tin idia onomasia sta specs. Opote den borw na kanw hardcode ena ena
-		 * opws exw kanei apo panw ta specs giati uparxoyn periptwseis opou h json_object_get_string 8a gurisei null
-		 * epeidh den 8a vrei to antistoixo json spec pou ths dinw. me apotelesma parakatw sto array na pernaei null anti gia string
-		 * kai na trwei segmentation. 
-		 * Ara, prepei na vrw tropo na pernaei oloklhro to json spec ws 1 string anti gia ena ena ka8e spec ksexwrista...
-		 * ====================== ETOIMO!!!!!!!!!!!! ===========================
-		 * akrivws auto pou periegrapsa ginetai me polu aplo tropo me tin json_object_to_json_string_ext pou exw xrhsimopoihsei apo panw!!!
-		 * 
+		/*  
 		 * references: 
 		 * https://alan-mushi.github.io/2014/10/28/json-c-tutorial-part-1.html
 		 * https://stackoverflow.com/questions/4085372/how-to-return-a-string-array-from-a-function/11543552
@@ -351,16 +317,4 @@ char* read_json(char* json_filename)
 
 
 		return (specs);
-}
-
-void printoutarray(char **specs)
-{
-  // for (int i = 0; i < 3; ++i) {
-  //       char *pos = specs[i];
-  //       while (*pos != '\0') {
-  //           printf("%c\n", *(pos++));
-  //       }
-  //       printf("\n");
-  //   }
-	printf("%s\n",specs[0]);
 }

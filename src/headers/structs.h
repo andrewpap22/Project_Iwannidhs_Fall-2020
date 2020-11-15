@@ -64,6 +64,7 @@ tree_entry *search(tree_entry *, char *);
 // tree_entry *Delete(tree_entry *,int);
 void preorder(tree_entry *);
 void inorder(tree_entry *);
+void free_list_of_buckets(bucket*);
 void free_node(tree_entry *);
 int height(tree_entry *);
 tree_entry *rotateright(tree_entry *);
@@ -81,7 +82,5 @@ int BF(tree_entry *);
  * Reads and opens each and every json file from each (sub)directory of the dataset directory.
  */
 char* read_json(char *);
-
-void printoutarray(char **);
 
 #endif /* STRUCTS_H */
