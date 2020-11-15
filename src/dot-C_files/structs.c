@@ -1,37 +1,43 @@
 #include "../headers/structs.h"
 
-int node_num = 0;
-
-int compare(char* a, char* b){
+int compare(char *a, char *b)
+{
 	//returns 0 if a is smaller, 1 if its bigger, 3 if they are the same (should never return 3)
-    int i=0;
-    while(1){
-        if(i<strlen(a) && i<strlen(b)){
-            if(*(a+i)<*(b+i)){
-                return 0;
-            }
-			else if(*(a+i)>*(b+i)){
-                return 1;
-            }
-        }
-        else if(i==strlen(a) && i!=strlen(b)){
-            return 0;
-        }
-        else if(i==strlen(b) && i!=strlen(a)){
-            return 1;
-        }
-        else{
-            return 3;
-        }
-    i++;
-    }
+	int i = 0;
+	while (1)
+	{
+		if (i < strlen(a) && i < strlen(b))
+		{
+			if (*(a + i) < *(b + i))
+			{
+				return 0;
+			}
+			else if (*(a + i) > *(b + i))
+			{
+				return 1;
+			}
+		}
+		else if (i == strlen(a) && i != strlen(b))
+		{
+			return 0;
+		}
+		else if (i == strlen(b) && i != strlen(a))
+		{
+			return 1;
+		}
+		else
+		{
+			return 3;
+		}
+		i++;
+	}
 }
 
-
-tree_entry *insert(tree_entry *T, int x, char *path_with_JSON, char* json_specs)
+tree_entry *insert(tree_entry *T, int x, char *path_with_JSON, char *json_specs)
 {
 
-	if (T == NULL){
+	if (T == NULL)
+	{
 
 		T = (tree_entry *)malloc(sizeof(tree_entry));
 
@@ -49,24 +55,24 @@ tree_entry *insert(tree_entry *T, int x, char *path_with_JSON, char* json_specs)
 		T->headbucket->first_bucket->numofentries = 1;
 	}
 	// else if (x > T->json) // insert in right subtree
-	else if (compare(path_with_JSON,T->path_with_JSON)==1) // insert in right subtree
+	else if (compare(path_with_JSON, T->path_with_JSON) == 1) // insert in right subtree
 
 	{
 		T->right = insert(T->right, x, path_with_JSON, json_specs);
 		if (BF(T) == -2)
 			// if (x > T->right->json)
-			if (compare(path_with_JSON,T->right->path_with_JSON)==1)
+			if (compare(path_with_JSON, T->right->path_with_JSON) == 1)
 				T = RR(T);
 			else
 				T = RL(T);
 	}
 	// else if (x < T->json)
-	else if (compare(path_with_JSON,T->path_with_JSON)==0) // insert in left subtree
+	else if (compare(path_with_JSON, T->path_with_JSON) == 0) // insert in left subtree
 	{
 		T->left = insert(T->left, x, path_with_JSON, json_specs);
 		if (BF(T) == 2)
 			// if (x < T->left->json)
-			if (compare(path_with_JSON,T->left->path_with_JSON)==0)
+			if (compare(path_with_JSON, T->left->path_with_JSON) == 0)
 				T = LL(T);
 			else
 				T = LR(T);
@@ -77,19 +83,19 @@ tree_entry *insert(tree_entry *T, int x, char *path_with_JSON, char* json_specs)
 	return (T);
 }
 
-tree_entry *search(tree_entry *T, char* x)
+tree_entry *search(tree_entry *T, char *x)
 {
 	if (T == NULL)
 	{
 		return NULL;
 	}
 	// if (x > T->json)
-	if (compare(x,T->path_with_JSON)==1)
+	if (compare(x, T->path_with_JSON) == 1)
 	{
 		return (search(T->right, x));
 	}
 	// else if (x < T->json)
-	else if (compare(x,T->path_with_JSON)==0)
+	else if (compare(x, T->path_with_JSON) == 0)
 	{
 		return (search(T->left, x));
 	}
@@ -290,31 +296,24 @@ char* read_json(char* json_filename)
 {
 	/* --- needed to handle json files --- */
 
-    char buffer[200000]; // stores contents of json files
+	char buffer[200000]; // stores contents of json files
 
-    struct json_object *parsed_json; // this holds the entire json document
+	struct json_object *parsed_json; // this holds the entire json document
 
 	FILE *fp;
 	long file_size;
-    fp = fopen(json_filename, "r");
-	fseek(fp,0L,SEEK_END);
-	file_size = ftell(fp);
-    fread(buffer, file_size, 1, fp); //read the file and put its contents into the buffer.
-    fclose(fp);
+	fp = fopen(json_filename, "r"); // open and read json files.
+	fseek(fp, 0L, SEEK_END);
+	file_size = ftell(fp); // determine the file size of each and every json file to allocate proper memory.
 
-    //parse json's file contents and convert it into json object.
-    parsed_json = json_tokener_parse(buffer);
-	char* specs = malloc(file_size*sizeof(char));
+	fread(buffer, file_size, 1, fp); //read the file and put its contents into the buffer.
+	fclose(fp);
 
-	strcpy(specs, json_object_to_json_string(parsed_json));
+	//parse json's file contents and convert it into json object.
+	parsed_json = json_tokener_parse(buffer);
 
-		/*  
-		 * references: 
-		 * https://alan-mushi.github.io/2014/10/28/json-c-tutorial-part-1.html
-		 * https://stackoverflow.com/questions/4085372/how-to-return-a-string-array-from-a-function/11543552
-		 * https://json-c.github.io/json-c/json-c-0.10/doc/html/json__object_8h.html#a84421dab94ccad42e901e534c6d7b658
-		 * */
+	char *specs = malloc(file_size * sizeof(char));
+	strcpy(specs, json_object_to_json_string(parsed_json)); // stringify the json object and store it as a single string.
 
-
-		return (specs);
+	return (specs); // return the stringified version of the json object of each and every .json file.
 }

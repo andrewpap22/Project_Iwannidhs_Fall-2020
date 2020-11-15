@@ -45,6 +45,10 @@ $ make
 ### Execution:
 ```
 $ ./project1 ../dataset/sigmod_large_labelled_dataset.csv
+
+  or
+
+$ ./project1 ../dataset/sigmod_medium_labelled_dataset.csv  
 ```
 
 **(Execution time on large dataset = 3sec)**
@@ -117,6 +121,7 @@ tree_entry *RL(tree_entry *T);
 int BF(tree_entry *T);
 void preorder(tree_entry *T);
 void inorder(tree_entry *T);
+void free_node(tree_entry *T);
 ```
 - Helper Function to read and store the contents of the json files.
   - *It takes as input a .json file it parses the json object of each and every file and then converts it into a C string format, it stores that string by allocating proper memory (the size of each json object) and then stores it into our tree buckets*
