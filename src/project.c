@@ -119,7 +119,7 @@ int main(void)
   printf("All relations are added.\n\n");
 
   FILE *fp2;
-  char *filename;
+  char *filename = NULL;
 
   printf("Enter the filename:\n");
   read = getline(&filename, &len, stdin);
