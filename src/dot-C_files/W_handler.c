@@ -98,33 +98,23 @@ void add_relation(tree_entry *root, char *json1, char *json2, int relation)
 	return;
 }
 
-void print_node_relations(tree_entry *node)
-{
+void print_node_relations(tree_entry *node, FILE* fp2){
 	bucket *iterator = node->headbucket->first_bucket;
-	while (iterator)
-	{
-
-		for (int i = 0; i < iterator->numofentries; i++)
-		{
-			if (compare(node->path_with_JSON, iterator->identical_entries[i]->path_with_JSON) == 0)
-			{
-				sum += 1;
+	while (iterator){
+		for (int i = 0; i < iterator->numofentries; i++){
+			if (compare(node->path_with_JSON, iterator->identical_entries[i]->path_with_JSON) == 0){
+				fprintf(fp2,"%s, %s\n",node->path_with_JSON, iterator->identical_entries[i]->path_with_JSON);				
 			}
 		}
 		iterator = iterator->next_bucket;
 	}
-	if (sum)
-	{
-		printf("json %d has a total of %d entries\n", node->json, sum);
-	}
 }
 
-void print_all_relations(tree_entry *root)
-{
+void print_all_relations(tree_entry *root, FILE* fp2){
 	if (root)
 	{
-		print_node_relations(root);
-		print_all_relations(root->right);
-		print_all_relations(root->left);
+		print_node_relations(root, fp2);
+		print_all_relations(root->right, fp2);
+		print_all_relations(root->left, fp2);
 	}
 }

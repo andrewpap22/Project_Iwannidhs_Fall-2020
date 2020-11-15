@@ -18,7 +18,7 @@ int main(void)
   tree_entry *database_root = NULL;
   int num_of_json = 0;
   char *name_of_json;
-
+  char *json_remover;
   char *full_json_path;
   char *json_specs;
 
@@ -33,7 +33,7 @@ int main(void)
   int relation;
   char *part_of_string;
 
-  printf("adding json files to database...\n");
+  printf("\nAdding json files to database...\n");
 
   //  read json dataset
   while ((dir = readdir(dirp)))
@@ -81,6 +81,9 @@ int main(void)
       strcat(full_json_path, dir_JSON->d_name);
 
       // read each and every .json file from the dataset and store it's contents into a single string to be used as BOW later on...
+      json_remover = strstr(name_of_json,".json");  //remove ".json" substring from all strings
+      *json_remover = '\0';
+
       json_specs = read_json(full_json_path);
 
       num_of_json = atoi(strtok(dir_JSON->d_name, "."));
@@ -90,7 +93,7 @@ int main(void)
     }
   }
 
-  printf("All json files have been added!\n");
+  printf("All json files have been added.\n\n");
 
   printf("Adding relations...\n");
 
@@ -99,7 +102,7 @@ int main(void)
 
   if (w_fp == NULL)
   {
-    printf("can't find W file!\n");
+    printf("Can't find W file!\n");
   }
 
   read = getline(&line, &len, w_fp);
@@ -107,40 +110,40 @@ int main(void)
   {
     part_of_string = strtok(line, ",");
     strcpy(json1, part_of_string);
-    strcat(json1, ".json");
     part_of_string = strtok(NULL, ",");
     strcpy(json2, part_of_string);
-    strcat(json2, ".json");
     part_of_string = strtok(NULL, "\n");
     relation = atoi(part_of_string);
     add_relation(database_root, json1, json2, relation);
   }
-  printf("All relations are added\n");
+  printf("All relations are added.\n\n");
 
-  // FILE *fp2;
-  // char *filename;
+  FILE *fp2;
+  char *filename;
 
-  // printf("Enter the filename: ");
-  // gets(filename);
+  printf("Enter the filename:\n");
+  read = getline(&filename, &len, stdin);
+  if (-1 == read){
+    printf("No line read\n");
+  }
+  json_remover = strstr(filename,"\n");  //remove "\n" substring from filename
+  *json_remover = '\0';
+  filename = strcat(filename, ".csv");
 
-  // printf("\nCreating %s.csv file", filename);
-  // filename = strcat(filename, ".csv");
+  printf("\nCreating %s...\n", filename);
+  fp2 = fopen(filename, "w+");
+  fprintf(fp2, "left_spec_id,right_spec_id\n");
+  print_all_relations(database_root,fp2);
+  fclose(fp2);
+  printf("%s created.\n\n", filename);
 
-  // fp2 = fopen(filename, "w+");
-  // fprintf(fp2, "left_spec_id,right_spec_id");
-
-  print_all_relations(database_root);
-
-  //delete the tree
+  printf("Freeing Database...\n");
   free_node(database_root);
-  printf("Shutting Down\n");
+  printf("Database Freed.\n\n");
+
+  printf("Shutting Down.\n");
 
   
-  // fclose(fp2);
-  // printf("\n%s file has been created.", filename);
-  // printf("\n");
-
-  // fclose(w_fp);
 
   return 0; // program has ended successfully.
 }

@@ -13,11 +13,11 @@ void insert_entry(tree_entry *, bucket *);
 void add_relation(tree_entry *, char *, char *, int);
 
 /* Prints the relations of json files on each and every node of the tree. */
-void print_node_relations(tree_entry *);
+void print_node_relations(tree_entry *,FILE*);
 
 /* prints the relations of each and every of the files.
  * outputs the same products onto a .csv file.
  */
-void print_all_relations(tree_entry *);
+void print_all_relations(tree_entry *,FILE*);
 
 #endif /* W_HANDLER_H */
