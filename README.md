@@ -181,7 +181,7 @@ void test_print_all_relations(tree_entry *,FILE*);
 
 - Helper Function to compare 2 .csv files.
   - *It takes as input 2 .csv files and compare them char by char. Return 0 if the files are same and -1 if files are different.*
-  ```C++
+```C++
 int helper_compareFile(FILE * fPtr1, FILE * fPtr2, int * line, int * col);
 ```
 
