@@ -4,7 +4,7 @@
 #include "../headers/structs.h"
 #include "../headers/W_handler.h"
 
-// function only for help the Unit Testing
+// Function only for help the Unit Testing
 int helper_compareFile(FILE * fPtr1, FILE * fPtr2, int * line, int * col)
 {
     char ch1, ch2;
