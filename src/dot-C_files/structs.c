@@ -296,24 +296,26 @@ char* read_json(char* json_filename)
 {
 	/* --- needed to handle json files --- */
 
-	char buffer[200000]; // stores contents of json files
-
 	struct json_object *parsed_json; // this holds the entire json document
 
 	FILE *fp;
 	long file_size;
+	char *buffer = NULL;
+	char *specs = NULL;
+
 	fp = fopen(json_filename, "r"); // open and read json files.
 	fseek(fp, 0L, SEEK_END);
 	file_size = ftell(fp); // determine the file size of each and every json file to allocate proper memory.
+	fseek(fp, 0L, SEEK_SET);
 
+	buffer = malloc(sizeof(char)*file_size); // stores contents of json files
 	fread(buffer, file_size, 1, fp); //read the file and put its contents into the buffer.
 	fclose(fp);
-
 	//parse json's file contents and convert it into json object.
 	parsed_json = json_tokener_parse(buffer);
-
-	char *specs = malloc(file_size * sizeof(char));
+	specs = malloc(file_size * sizeof(char));
 	strcpy(specs, json_object_to_json_string(parsed_json)); // stringify the json object and store it as a single string.
 
+	free(buffer);
 	return (specs); // return the stringified version of the json object of each and every .json file.
 }
