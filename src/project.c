@@ -81,7 +81,7 @@ int main(void)
       strcat(full_json_path, dir_JSON->d_name);
 
       // read each and every .json file from the dataset and store it's contents into a single string to be used as BOW later on...
-      json_remover = strstr(name_of_json,".json");  //remove ".json" substring from all strings
+      json_remover = strstr(name_of_json, ".json"); //remove ".json" substring from all strings
       *json_remover = '\0';
 
       json_specs = read_json(full_json_path);
@@ -119,21 +119,22 @@ int main(void)
   printf("All relations are added.\n\n");
 
   FILE *fp2;
-  char *filename;
+  char *filename = NULL;
 
   printf("Enter the filename:\n");
   read = getline(&filename, &len, stdin);
-  if (-1 == read){
+  if (-1 == read)
+  {
     printf("No line read\n");
   }
-  json_remover = strstr(filename,"\n");  //remove "\n" substring from filename
+  json_remover = strstr(filename, "\n"); //remove "\n" substring from filename
   *json_remover = '\0';
   filename = strcat(filename, ".csv");
 
   printf("\nCreating %s...\n", filename);
   fp2 = fopen(filename, "w+");
   fprintf(fp2, "left_spec_id,right_spec_id\n");
-  print_all_relations(database_root,fp2);
+  print_all_relations(database_root, fp2);
   fclose(fp2);
   printf("%s created.\n\n", filename);
 
@@ -142,8 +143,6 @@ int main(void)
   printf("Database Freed.\n\n");
 
   printf("Shutting Down.\n");
-
-  
 
   return 0; // program has ended successfully.
 }

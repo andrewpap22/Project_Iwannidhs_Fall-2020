@@ -29,6 +29,7 @@
     </ul>
     <p>📄 makefile</p>
     <p>📄 project.c</p>
+    <p>📄 output.csv</p>
   </li>
   <li>
     <a href="https://github.com/andrewpap22/Project_Iwannidhs_Fall-2020/tree/master/valgrind_output">📂 valgrind_output</a>
@@ -93,7 +94,7 @@ void add_relation(tree_entry* root, char* json1, char* json2, int relation);
 ```
 who's responsible for comparing the specs of the .json files and add their relation *(the ones that are the same)* to our linked list of buckets. <br>
 ```C++
-void print_node_relations(tree_entry* node);
+void print_all_relations(tree_entry *,FILE*);
 ```
 who's responsible for printing out into the .csv all the specs that consist of the same commodity. <br><br>
 
