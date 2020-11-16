@@ -34,13 +34,14 @@ int helper_compareFile(FILE * fPtr1, FILE * fPtr2, int * line, int * col)
     } while (ch1 != EOF && ch2 != EOF);
 
 
-    /* If both files have reached end */
+    // If both files have reached end 
     if (ch1 == EOF && ch2 == EOF)
         return 0;
     else
         return -1;
 };
 
+// Testing the function height in struct.c
 void test_height(void){
     tree_entry *database_root = NULL;
     char *json_specs;
@@ -49,7 +50,8 @@ void test_height(void){
     char *name_of_json;
     char *full_json_path;
 
-    //Tree 1 node
+    // Creating a test tree
+    // First insertion of tree
     num_of_json = 4233;
     name_of_json = malloc(sizeof(char *));
     strcpy(name_of_json, "buy.net//4233");
@@ -57,7 +59,7 @@ void test_height(void){
     json_specs = read_json(full_json_path);
     database_root = insert(database_root, num_of_json, name_of_json, json_specs);
 
-    //Tree 2 nodes
+    // Second insertion of tree
     num_of_json = 4236;
     name_of_json = malloc(sizeof(char *));
     strcpy(name_of_json, "buy.net//4236");
@@ -65,7 +67,7 @@ void test_height(void){
     json_specs = read_json(full_json_path);
     database_root = insert(database_root, num_of_json, name_of_json, json_specs);
 
-    //Tree 3 nodes
+    // Third insertion of tree
     num_of_json = 4239;
     name_of_json = malloc(sizeof(char *));
     strcpy(name_of_json, "buy.net//4239");
@@ -73,7 +75,7 @@ void test_height(void){
     json_specs = read_json(full_json_path);
     database_root = insert(database_root, num_of_json, name_of_json, json_specs);
 
-    //Tree 4 nodes
+    // Forth insertion of tree
     num_of_json = 5449;
     name_of_json = malloc(sizeof(char *));
     strcpy(name_of_json, "www.alibaba.com//5449");
@@ -81,6 +83,7 @@ void test_height(void){
     json_specs = read_json(full_json_path);
     database_root = insert(database_root, num_of_json, name_of_json, json_specs);
 
+    // Testing the height of the tree - It has to be 2
     ht = height(database_root);
     TEST_CHECK(ht == 2);
     TEST_MSG("Expected: %d", 2);
@@ -88,6 +91,7 @@ void test_height(void){
 
 }
 
+// Testing the function BF in struct.c
 void test_BF(void){
     tree_entry *database_root = NULL;
     char *json_specs;
@@ -96,7 +100,8 @@ void test_BF(void){
     char *name_of_json;
     char *full_json_path;
 
-    //Tree 1 node
+    // Creating a test tree
+    // First insertion of tree
     num_of_json = 4233;
     name_of_json = malloc(sizeof(char *));
     strcpy(name_of_json, "buy.net//4233");
@@ -104,7 +109,7 @@ void test_BF(void){
     json_specs = read_json(full_json_path);
     database_root = insert(database_root, num_of_json, name_of_json, json_specs);
 
-    //Tree 2 nodes
+    // Second insertion of tree
     num_of_json = 4236;
     name_of_json = malloc(sizeof(char *));
     strcpy(name_of_json, "buy.net//4236");
@@ -112,7 +117,7 @@ void test_BF(void){
     json_specs = read_json(full_json_path);
     database_root = insert(database_root, num_of_json, name_of_json, json_specs);
 
-    //Tree 3 nodes
+    // Third insertion of tree
     num_of_json = 4239;
     name_of_json = malloc(sizeof(char *));
     strcpy(name_of_json, "buy.net//4239");
@@ -120,7 +125,7 @@ void test_BF(void){
     json_specs = read_json(full_json_path);
     database_root = insert(database_root, num_of_json, name_of_json, json_specs);
 
-    //Tree 4 nodes
+    // Forth insertion of tree
     num_of_json = 5449;
     name_of_json = malloc(sizeof(char *));
     strcpy(name_of_json, "www.alibaba.com//5449");
@@ -128,6 +133,7 @@ void test_BF(void){
     json_specs = read_json(full_json_path);
     database_root = insert(database_root, num_of_json, name_of_json, json_specs);
 
+    // Testing the BF of the tree - For those tree nodes thw BF has to be -1
     bf = BF(database_root);
     TEST_CHECK(bf == -1);
     TEST_MSG("Expected: %d", -1);
@@ -135,28 +141,44 @@ void test_BF(void){
 
 }
 
+// Testing the function compare in struct.c
 void test_compare(void){
     char *name_of_json_1, *name_of_json_2;
     int cm;
 
+    // Give value in the variables that we are going to compare
     name_of_json_1 = malloc(sizeof(char *));
     strcpy(name_of_json_1, "buy.net//4236");
     name_of_json_2 = malloc(sizeof(char *));
     strcpy(name_of_json_2, "buy.net//4239");
 
+    // Testing the comparison of 2 string variables - it has to be different name_of_json_1 < name_of_json_2
     cm = compare(name_of_json_1,name_of_json_2);
     TEST_CHECK(cm == 0);
     TEST_MSG("Expected: %d", 1);
     TEST_MSG("Produced: %d", cm);
 
+    // Give value in the variables that we are going to compare
+    name_of_json_1 = malloc(sizeof(char *));
+    strcpy(name_of_json_1, "buy.net//4236");
+    name_of_json_2 = malloc(sizeof(char *));
+    strcpy(name_of_json_2, "buy.net//4236");
+
+    // Testing the comparison of 2 string variables - it has to be different name_of_json_1 = name_of_json_2
+    cm = compare(name_of_json_1,name_of_json_2);
+    TEST_CHECK(cm == 3);
+    TEST_MSG("Expected: %d", 3);
+    TEST_MSG("Produced: %d", cm);
 }
 
+// Testing the function read_json in struct.c
 void test_read_json(void){
 
     char *full_json_path;
     char *json_specs;
     int len1 = 0 ,len2 = 0;
     int cm = 0;
+    // Store a json into a string
     char* str = "{\
  \"<page title>\": \"Polaroid Is426 16 Megapixel Compact Camera - Red - 2.4\\\" Lcd - 4x Optical Zoom - Pictbridge IS426RED Price Comparison at Buy.net\",\
  \"brand name\": \"Polaroid\",\
@@ -172,14 +194,21 @@ void test_read_json(void){
  \"viewfinder type\": \"No\"\
  }";
 
+    // First Test
+    // Give the path with the json file that we are going to compare with the static variable
     full_json_path = "../../dataset/camera_specs/2013_camera_specs/buy.net/4236.json";
+
+    // Call the function read_json
     json_specs = read_json(full_json_path);
 
+    // Compare the static string with the result of the testing function - they have to be same
     cm = compare(str,json_specs);
     TEST_CHECK(cm == 3);
     TEST_MSG("Expected: %d", 3);
     TEST_MSG("Produced: %d", cm);
 
+    // Second Test
+    // Testing the length of the 2 strings - they must have the same length
     len1 = strlen(str);
     len2 = strlen(json_specs);
 
@@ -187,8 +216,22 @@ void test_read_json(void){
     TEST_MSG("Expected: %d", TRUE);
     TEST_MSG("Produced: %d", len1 == len2);
 
+    // Third Test
+    // Give the path with the json file that we are going to compare with the static variable
+    full_json_path = "../../dataset/camera_specs/2013_camera_specs/buy.net/4233.json";
+
+    // Call the function read_json
+    json_specs = read_json(full_json_path);
+
+    // Compare the static string with the result of the testing function - they have to be different 
+    cm = compare(str,json_specs);
+    TEST_CHECK(cm == 1);
+    TEST_MSG("Expected: %d", 1);
+    TEST_MSG("Produced: %d", cm);
+
 }
 
+// Testing the function insert in struct.c 
 void test_insert(void){
     tree_entry *database_root = NULL;
     char *json_specs;
@@ -197,7 +240,8 @@ void test_insert(void){
     char *name_of_json;
     char *full_json_path;
 
-	  //Tree 1 node
+	  // Creating a test tree
+    // First insertion of tree
   	num_of_json = 4233;
     name_of_json = malloc(sizeof(char *));
   	strcpy(name_of_json, "buy.net//4233");
@@ -205,7 +249,7 @@ void test_insert(void){
   	json_specs = read_json(full_json_path);
   	database_root = insert(database_root, num_of_json, name_of_json, json_specs);
 
-    //Tree 2 nodes
+    // Second insertion of tree
   	num_of_json = 4236;
     name_of_json = malloc(sizeof(char *));
   	strcpy(name_of_json, "buy.net//4236");
@@ -213,18 +257,19 @@ void test_insert(void){
   	json_specs = read_json(full_json_path);
   	database_root = insert(database_root, num_of_json, name_of_json, json_specs);
 
-    //Test for height of the tree
+    //Testing for height of the tree
   	ht = height(database_root);
   	TEST_CHECK(ht == 1);
   	TEST_MSG("Expected: %d", 1);
     TEST_MSG("Produced: %d", ht);
-    //Test for BF of the tree
+
+    //Testing for BF of the tree
     bf = BF(database_root);
     TEST_CHECK(bf == -1);
     TEST_MSG("Expected: %d", -1);
     TEST_MSG("Produced: %d", bf);
 
-    //Tree 3 nodes
+    // Third insertion of tree
     num_of_json = 4239;
     name_of_json = malloc(sizeof(char *));
     strcpy(name_of_json, "buy.net//4239");
@@ -232,18 +277,18 @@ void test_insert(void){
     json_specs = read_json(full_json_path);
     database_root = insert(database_root, num_of_json, name_of_json, json_specs);
 
-    //Test for height of the tree
+    //Testing for height of the tree
     ht = height(database_root);
     TEST_CHECK(ht == 1);
     TEST_MSG("Expected: %d", 1);
     TEST_MSG("Produced: %d", ht);
-    //Test for BF of the tree
+    //Testing for BF of the tree
     bf = BF(database_root);
     TEST_CHECK(bf == 0);
     TEST_MSG("Expected: %d", 0);
     TEST_MSG("Produced: %d", bf);
 
-    //Tree 4 nodes
+    // Forth insertion of tree
     num_of_json = 5449;
     name_of_json = malloc(sizeof(char *));
     strcpy(name_of_json, "www.alibaba.com//5449");
@@ -251,13 +296,13 @@ void test_insert(void){
     json_specs = read_json(full_json_path);
     database_root = insert(database_root, num_of_json, name_of_json, json_specs);
 
-    //Test for BF of the tree
+    //Testing for BF of the tree
     bf = BF(database_root);
     TEST_CHECK(bf == -1);
     TEST_MSG("Expected: %d", -1);
     TEST_MSG("Produced: %d", bf);
 
-    //Test for height of the tree
+    //Testing for height of the tree
     ht = height(database_root);
     TEST_CHECK(ht == 2);
     TEST_MSG("Expected: %d", 2);
@@ -267,6 +312,7 @@ void test_insert(void){
     free_node(database_root);
 }
 
+// Testing the function search in struct.c 
 void test_search(void){
 
     tree_entry *database_root = NULL;
@@ -278,7 +324,7 @@ void test_search(void){
     tree_entry *entry1 = NULL;
     tree_entry *entry2 = NULL;
 
-    //Tree 1 node
+    // First insertion of tree
     num_of_json = 4233;
     name_of_json = malloc(sizeof(char *));
     strcpy(name_of_json, "buy.net//4233");
@@ -286,7 +332,7 @@ void test_search(void){
     json_specs = read_json(full_json_path);
     database_root = insert(database_root, num_of_json, name_of_json, json_specs);
 
-    //Tree 2 nodes
+    // Second insertion of tree
     num_of_json = 4236;
     name_of_json = malloc(sizeof(char *));
     strcpy(name_of_json, "buy.net//4236");
@@ -294,7 +340,7 @@ void test_search(void){
     json_specs = read_json(full_json_path);
     database_root = insert(database_root, num_of_json, name_of_json, json_specs);
 
-    //Tree 3 nodes
+    // Third insertion of tree
     num_of_json = 4239;
     name_of_json = malloc(sizeof(char *));
     strcpy(name_of_json, "buy.net//4239");
@@ -302,7 +348,7 @@ void test_search(void){
     json_specs = read_json(full_json_path);
     database_root = insert(database_root, num_of_json, name_of_json, json_specs);
 
-    //Tree 4 nodes
+    // Forth insertion of tree
     num_of_json = 5449;
     name_of_json = malloc(sizeof(char *));
     strcpy(name_of_json, "www.alibaba.com//5449");
@@ -310,7 +356,7 @@ void test_search(void){
     json_specs = read_json(full_json_path);
     database_root = insert(database_root, num_of_json, name_of_json, json_specs);
 
-    //Tree 5 nodes
+    // Fifth insertion of tree
     num_of_json = 5;
     name_of_json = malloc(sizeof(char *));
     strcpy(name_of_json, "www.cambuy.com.au//5");
@@ -318,26 +364,24 @@ void test_search(void){
     json_specs = read_json(full_json_path);
     database_root = insert(database_root, num_of_json, name_of_json, json_specs);
 
-    //find the jsons in the tree
+    // Search the jsons in the tree
     entry1 = search(database_root, "buy.net//4239");
     entry2 = search(database_root, "www.alibaba.com//5449");
 
+    // Testing if the json of entry1 is the 4239
     TEST_CHECK(entry1->json == 4239);
     TEST_MSG("Expected: %d", TRUE);
     TEST_MSG("Produced: %d", entry1->json == 4239);
 
+    // Testing if the path_json of entry2 is "www.alibaba.com//5449"
     cm = compare(entry2->path_with_JSON, "www.alibaba.com//5449");
     TEST_CHECK(cm == 3);
     TEST_MSG("Expected: %d", 3);
     TEST_MSG("Produced: %d", cm);
 
-    add_relation(database_root,"buy.net//4239","www.alibaba.com//5449",1);
-    TEST_CHECK(entry1->headbucket == entry2->headbucket);
-    TEST_MSG("Expected: %d", TRUE);
-    TEST_MSG("Produced: %d", entry1->headbucket == entry2->headbucket);
-
 }
 
+// Testing the function insert_entry in w_handler.c
 void test_insert_entry(void){
     tree_entry *database_root = NULL;
     char *json_specs;
@@ -348,7 +392,7 @@ void test_insert_entry(void){
     tree_entry *entry1 = NULL;
     tree_entry *entry2 = NULL;
 
-    //Tree 1 node
+    // First insertion of tree
     num_of_json = 4233;
     name_of_json = malloc(sizeof(char *));
     strcpy(name_of_json, "buy.net//4233");
@@ -356,7 +400,7 @@ void test_insert_entry(void){
     json_specs = read_json(full_json_path);
     database_root = insert(database_root, num_of_json, name_of_json, json_specs);
 
-    //Tree 2 nodes
+    // Second insertion of tree
     num_of_json = 4236;
     name_of_json = malloc(sizeof(char *));
     strcpy(name_of_json, "buy.net//4236");
@@ -364,7 +408,7 @@ void test_insert_entry(void){
     json_specs = read_json(full_json_path);
     database_root = insert(database_root, num_of_json, name_of_json, json_specs);
 
-    //Tree 3 nodes
+    // Third insertion of tree
     num_of_json = 4239;
     name_of_json = malloc(sizeof(char *));
     strcpy(name_of_json, "buy.net//4239");
@@ -372,7 +416,7 @@ void test_insert_entry(void){
     json_specs = read_json(full_json_path);
     database_root = insert(database_root, num_of_json, name_of_json, json_specs);
 
-    //Tree 4 nodes
+    // Forht insertion of tree
     num_of_json = 5449;
     name_of_json = malloc(sizeof(char *));
     strcpy(name_of_json, "www.alibaba.com//5449");
@@ -380,7 +424,7 @@ void test_insert_entry(void){
     json_specs = read_json(full_json_path);
     database_root = insert(database_root, num_of_json, name_of_json, json_specs);
 
-    //Tree 5 nodes
+    // Fifth insertion of tree
     num_of_json = 5;
     name_of_json = malloc(sizeof(char *));
     strcpy(name_of_json, "www.cambuy.com.au//5");
@@ -388,7 +432,7 @@ void test_insert_entry(void){
     json_specs = read_json(full_json_path);
     database_root = insert(database_root, num_of_json, name_of_json, json_specs);
 
-    //find the jsons in the tree
+    // Search the jsons in the tree
     entry1 = search(database_root, "buy.net//4239");
     entry2 = search(database_root, "buy.net//4233");
 
@@ -396,29 +440,31 @@ void test_insert_entry(void){
     bucket *prev_bucket_2 = entry2->headbucket->first_bucket;
     bucket *current_bucket_1 = entry1->headbucket->first_bucket;
 
-    //find the last and the second last buckets of json2
+    // Find the last and the second last buckets of json2
     while (current_bucket_2->next_bucket != NULL)
     {
       prev_bucket_2 = current_bucket_2;
       current_bucket_2 = current_bucket_2->next_bucket;
     }
-    //Find last bucket of json1 (where the entries will go)
+    // Find last bucket of json1 (where the entries will go)
     while (current_bucket_1->next_bucket != NULL)
     {
       current_bucket_1 = current_bucket_1->next_bucket;
     }
-    //add the last bucket entries of json2 bucketlist to json1 bucketlist
+    // Add the last bucket entries of json2 bucketlist to json1 bucketlist
     for (int i = 0; i < current_bucket_2->numofentries; i++)
     {
        insert_entry(current_bucket_2->identical_entries[i], current_bucket_1);
     }
 
+    // Checking if the identical_entries of 2 current_buckets are the same
     TEST_CHECK(current_bucket_1->identical_entries[current_bucket_1->numofentries] == current_bucket_2->identical_entries[current_bucket_2->numofentries]);
     TEST_MSG("Expected: %d", TRUE);
     TEST_MSG("Produced: %d", current_bucket_1->identical_entries[current_bucket_1->numofentries] == current_bucket_2->identical_entries[current_bucket_2->numofentries]);
 
 }
 
+// Testing the function add_relation in w_handler.c
 void test_add_relation(void){
 
     tree_entry *database_root = NULL;
@@ -430,7 +476,7 @@ void test_add_relation(void){
     tree_entry *entry1 = NULL;
     tree_entry *entry2 = NULL;
 
-    //Tree 1 node
+    // First insertion of tree
     num_of_json = 4233;
     name_of_json = malloc(sizeof(char *));
     strcpy(name_of_json, "buy.net//4233");
@@ -438,7 +484,7 @@ void test_add_relation(void){
     json_specs = read_json(full_json_path);
     database_root = insert(database_root, num_of_json, name_of_json, json_specs);
 
-    //Tree 2 nodes
+    // Second insertion of tree
     num_of_json = 4236;
     name_of_json = malloc(sizeof(char *));
     strcpy(name_of_json, "buy.net//4236");
@@ -446,7 +492,7 @@ void test_add_relation(void){
     json_specs = read_json(full_json_path);
     database_root = insert(database_root, num_of_json, name_of_json, json_specs);
 
-    //Tree 3 nodes
+    // Third insertion of tree
     num_of_json = 4239;
     name_of_json = malloc(sizeof(char *));
     strcpy(name_of_json, "buy.net//4239");
@@ -454,7 +500,7 @@ void test_add_relation(void){
     json_specs = read_json(full_json_path);
     database_root = insert(database_root, num_of_json, name_of_json, json_specs);
 
-    //Tree 4 nodes
+    // Forth insertion of tree
     num_of_json = 5449;
     name_of_json = malloc(sizeof(char *));
     strcpy(name_of_json, "www.alibaba.com//5449");
@@ -462,7 +508,7 @@ void test_add_relation(void){
     json_specs = read_json(full_json_path);
     database_root = insert(database_root, num_of_json, name_of_json, json_specs);
 
-    //Tree 5 nodes
+    // Fifth insertion of tree
     num_of_json = 5;
     name_of_json = malloc(sizeof(char *));
     strcpy(name_of_json, "www.cambuy.com.au//5");
@@ -470,6 +516,7 @@ void test_add_relation(void){
     json_specs = read_json(full_json_path);
     database_root = insert(database_root, num_of_json, name_of_json, json_specs);
 
+    // Call add_realtion to test the function
     add_relation(database_root,"buy.net//4239","www.alibaba.com//5449",1);
     add_relation(database_root,"buy.net//4233","buy.net//4236",1);
     add_relation(database_root,"buy.net//4236","www.alibaba.com//5449",0);
@@ -477,10 +524,11 @@ void test_add_relation(void){
     add_relation(database_root,"www.cambuy.com.au//5","buy.net//4239",1);
     add_relation(database_root,"www.cambuy.com.au//5","buy.net//4233",0);
 
-    //find the jsons in the tree
+    // Search the jsons in the tree
     entry1 = search(database_root, "buy.net//4239");
     entry2 = search(database_root, "www.alibaba.com//5449");
 
+    // Check if the headbuckets of the entries are the same
     TEST_CHECK(entry1->headbucket == entry2->headbucket);
     TEST_MSG("Expected: %d", TRUE);
     TEST_MSG("Produced: %d", entry1->headbucket == entry2->headbucket);
@@ -488,10 +536,11 @@ void test_add_relation(void){
     entry1 = NULL;
     entry2 = NULL;
 
-    //find the jsons in the tree
+    // Search the jsons in the tree
     entry1 = search(database_root, "buy.net//4233");
     entry2 = search(database_root, "www.alibaba.com//5449");
 
+    // Check if the headbuckets of the entries are different
     TEST_CHECK(entry1->headbucket != entry2->headbucket);
     TEST_MSG("Expected: %d", TRUE);
     TEST_MSG("Produced: %d", entry1->headbucket == entry2->headbucket);
@@ -499,16 +548,18 @@ void test_add_relation(void){
     entry1 = NULL;
     entry2 = NULL;
 
-    //find the jsons in the tree
+    // Search the jsons in the tree
     entry1 = search(database_root, "www.cambuy.com.au//5");
     entry2 = search(database_root, "www.alibaba.com//5449");
 
+    // Check if the headbuckets of the entries are the same 
     TEST_CHECK(entry1->headbucket == entry2->headbucket);
     TEST_MSG("Expected: %d", TRUE);
     TEST_MSG("Produced: %d", entry1->headbucket == entry2->headbucket);
 
     }
 
+// Testing the function print_all_relations in w_handler.c
 void test_print_all_relations(void){
     tree_entry *database_root = NULL;
     char *json_specs;
@@ -522,7 +573,7 @@ void test_print_all_relations(void){
     int diff;
     int line, col;
 
-    //Tree 1 node
+    // First insertion of tree
     num_of_json = 4233;
     name_of_json = malloc(sizeof(char *));
     strcpy(name_of_json, "buy.net//4233");
@@ -530,7 +581,7 @@ void test_print_all_relations(void){
     json_specs = read_json(full_json_path);
     database_root = insert(database_root, num_of_json, name_of_json, json_specs);
 
-    //Tree 2 nodes
+    // Second insertion of tree
     num_of_json = 4236;
     name_of_json = malloc(sizeof(char *));
     strcpy(name_of_json, "buy.net//4236");
@@ -538,7 +589,7 @@ void test_print_all_relations(void){
     json_specs = read_json(full_json_path);
     database_root = insert(database_root, num_of_json, name_of_json, json_specs);
 
-    //Tree 3 nodes
+    // Third insertion of tree
     num_of_json = 4239;
     name_of_json = malloc(sizeof(char *));
     strcpy(name_of_json, "buy.net//4239");
@@ -546,7 +597,7 @@ void test_print_all_relations(void){
     json_specs = read_json(full_json_path);
     database_root = insert(database_root, num_of_json, name_of_json, json_specs);
 
-    //Tree 4 nodes
+    // Forth insertion of tree
     num_of_json = 5449;
     name_of_json = malloc(sizeof(char *));
     strcpy(name_of_json, "www.alibaba.com//5449");
@@ -554,7 +605,7 @@ void test_print_all_relations(void){
     json_specs = read_json(full_json_path);
     database_root = insert(database_root, num_of_json, name_of_json, json_specs);
 
-    //Tree 5 nodes
+    // Fifth insertion of tree
     num_of_json = 5;
     name_of_json = malloc(sizeof(char *));
     strcpy(name_of_json, "www.cambuy.com.au//5");
@@ -562,6 +613,7 @@ void test_print_all_relations(void){
     json_specs = read_json(full_json_path);
     database_root = insert(database_root, num_of_json, name_of_json, json_specs);
 
+    // Call add_relation to relate the json entries
     add_relation(database_root,"buy.net//4239","www.alibaba.com//5449",1);
     add_relation(database_root,"buy.net//4233","buy.net//4236",1);
     add_relation(database_root,"buy.net//4236","www.alibaba.com//5449",0);
@@ -569,25 +621,29 @@ void test_print_all_relations(void){
     add_relation(database_root,"www.cambuy.com.au//5","buy.net//4239",1);
     add_relation(database_root,"www.cambuy.com.au//5","buy.net//4233",0);
 
+    // Call print_all_relations to write a .csv file 
     fprintf(fp1, "left_spec_id,right_spec_id\n");
     print_all_relations(database_root, fp1);
     fclose(fp1);
 
-    fp2 = fopen("Unit_test.csv", "r"); // open the already written .csv file
-    fp3 = fopen("Unit_test_byme.csv", "r"); // open the test .csv file
+    // Preparation of the comparison of 2 .csv files 
+    fp2 = fopen("Unit_test.csv", "r");        // open the already written .csv file
+    fp3 = fopen("Unit_test_byme.csv", "r");   // open the test .csv file
     
+    // Call the helper_comparison of 2 .csv files
     diff = helper_compareFile(fp2, fp3, &line, &col);
 
     fclose(fp2);
     fclose(fp3);
 
+    // Testing if the files are the same
     TEST_CHECK(diff == 0);
     TEST_MSG("Expected: %d", 0);
     TEST_MSG("Produced: %d", diff);
 }
 
 
-
+// A list of the testing functions
 TEST_LIST = {
     { "compare", test_compare },
     { "height", test_height },
