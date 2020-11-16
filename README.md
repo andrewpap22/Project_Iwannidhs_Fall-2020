@@ -24,7 +24,13 @@
         <a href="https://github.com/andrewpap22/Project_Iwannidhs_Fall-2020/tree/master/src/dot-C_files">📂 dot-C_files</a>
       </li>
       <li>
+        <a href="https://github.com/andrewpap22/Project_Iwannidhs_Fall-2020/tree/master/src/external">📂 external</a>
+      </li>
+      <li>
         <a href="https://github.com/andrewpap22/Project_Iwannidhs_Fall-2020/tree/master/src/headers">📂 headers</a>
+      </li>
+      <li>
+        <a href="https://github.com/andrewpap22/Project_Iwannidhs_Fall-2020/tree/master/src/test">📂 test</a>
       </li>
     </ul>
     <p>📄 makefile</p>
