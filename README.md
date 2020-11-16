@@ -136,6 +136,65 @@ void free_node(tree_entry *T);
 char* read_json(char* json_filename);
 ```
 
+## Unit Testing
+
+Following the path: <br>
+**src** ~> **test** ~> *simple_test.c* <br>
+We have: 
+```C++
+void test_compare(void);
+```
+- responsible for testing the function compare. <br>
+```C++
+void test_height(void);
+```
+- responsible for testing the function height. <br>
+```C++
+void test_BF(void);
+```
+- responsible for testing the function BF. <br>
+```C++
+void test_read_json(void);
+```
+- responsible for testing the function read_json. <br>
+```C++
+void test_insert(void);
+```
+- responsible for testing the function insert. <br>
+```C++
+void test_insert_entry(void);
+```
+- responsible for testing the function insert_entry. <br>
+```C++
+void test_search(void);
+```
+- responsible for testing the function search. <br>
+```C++
+void test_add_relation(void);
+```
+- responsible for testing the function add_relation. <br>
+```C++
+void test_print_all_relations(tree_entry *,FILE*);
+```
+- responsible for testing the function print_all_relations. <br><br>
+
+```
+- Helper Function to compare 2 .csv files.
+  - *It takes as input 2 .csv files and compare them char by char. Return 0 if the files are same and -1 if files are different.*
+  ```C++
+int helper_compareFile(FILE * fPtr1, FILE * fPtr2, int * line, int * col);
+```
+
+Run the Unit Testing: <br>
+How to compile the Unit tests <br>
+- gcc simple_test.c ../dot-C_files/structs.c ../dot-C_files/W_handler.c -o simple_test -ljson-c <br>
+How to run the tests <br>
+- We can run all tests in the suite 
+  - *./simple_tests*
+- We can run only tests specified
+  - *./simple_tests insert*
+  - *./simple_tests add_relation*
+
 <hr>
 
 - *The code is thoroughly commented wherever needed for it's better comprehension.*
