@@ -177,8 +177,7 @@ void test_add_relation(void);
 void test_print_all_relations(tree_entry *,FILE*);
 ```
 - responsible for testing the function print_all_relations. <br><br>
-
-```
+<br>
 - Helper Function to compare 2 .csv files.
   - *It takes as input 2 .csv files and compare them char by char. Return 0 if the files are same and -1 if files are different.*
   ```C++
