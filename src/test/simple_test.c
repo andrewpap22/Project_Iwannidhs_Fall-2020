@@ -413,10 +413,9 @@ void test_insert_entry(void){
        insert_entry(current_bucket_2->identical_entries[i], current_bucket_1);
     }
 
-    TEST_CHECK(current_bucket_2->identical_entries[current_bucket_2->numofentries] != entry1);
-    TEST_MSG("Expected: %d", FALSE);
-    TEST_MSG("Produced: %d", entry2->headbucket == entry1->headbucket);
-
+    TEST_CHECK(current_bucket_1->identical_entries[current_bucket_1->numofentries] == current_bucket_2->identical_entries[current_bucket_2->numofentries]);
+    TEST_MSG("Expected: %d", TRUE);
+    TEST_MSG("Produced: %d", current_bucket_1->identical_entries[current_bucket_1->numofentries] == current_bucket_2->identical_entries[current_bucket_2->numofentries]);
 
 }
 
