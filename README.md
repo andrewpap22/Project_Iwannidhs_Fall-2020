@@ -198,8 +198,13 @@ How to run the tests <br>
 <hr>
 
 - *The code is thoroughly commented wherever needed for it's better comprehension.*
-- **Thank you!** 😄 
+- **Thank you!** 😄
+
 <hr>
+
+## `Part 2` of the Project
+
+From here and on we'll continue the documentation of the `part2` of the project.
 
 <a href="mailto:sdi1400176@di.uoa.gr">🧑 Nikitas Sakkas</a>, <a href="mailto:sdi1500201@di.uoa.gr">🧔 Andrew Pappas</a>, <a href="mailto:sdi1400126@di.uoa.gr">👩 Konstantina Nika</a> <br>
 :copyright: 2020 - 2021, All Rights Reserved.
