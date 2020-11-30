@@ -28,8 +28,7 @@ void insert_entry(tree_entry *entry, bucket *first_bucket)
 	}
 }
 
-void add_relation(tree_entry *root, char *json1, char *json2, int relation)
-{
+void add_positive_relation(tree_entry *root, char *json1, char *json2, int relation){
 	if (relation == 1)
 	{
 		//if the jsons are already in the same group return
@@ -97,23 +96,67 @@ void add_relation(tree_entry *root, char *json1, char *json2, int relation)
 	return;
 }
 
-void print_node_relations(tree_entry *node, FILE* fp2){
+void add_negative_relation(tree_entry *root, char *json1, char *json2, int relation){
+	if (relation == 0){
+		tree_entry *entry1 = search(root, json1);
+		tree_entry *entry2 = search(root, json2);
+		if (entry1!=NULL && entry2!=NULL){
+			
+			clique_tree_entry *negative_relation_entry = clique_tree_search(entry1->headbucket->different_cliques_root, entry2->headbucket->key);
+			if (negative_relation_entry==NULL){
+				entry1->headbucket->different_cliques_root = clique_tree_insert(entry1->headbucket->different_cliques_root, entry2->headbucket);
+				// printf("%s\n",entry1->path_with_JSON);
+				entry2->headbucket->different_cliques_root = clique_tree_insert(entry2->headbucket->different_cliques_root, entry1->headbucket);
+			}
+		}
+	}	
+}
+
+void print_node_positive_relations(tree_entry *node, FILE* fp2){
 	bucket *iterator = node->headbucket->first_bucket;
 	while (iterator){
 		for (int i = 0; i < iterator->numofentries; i++){
 			if (compare(node->path_with_JSON, iterator->identical_entries[i]->path_with_JSON) == 0){
-				fprintf(fp2,"%s, %s\n",node->path_with_JSON, iterator->identical_entries[i]->path_with_JSON);				
+				fprintf(fp2,"%s, %s, 1\n",node->path_with_JSON, iterator->identical_entries[i]->path_with_JSON);				
 			}
 		}
 		iterator = iterator->next_bucket;
 	}
 }
 
-void print_all_relations(tree_entry *root, FILE* fp2){
+void print_all_positive_relations(tree_entry *root, FILE* fp2){
 	if (root)
 	{
-		print_node_relations(root, fp2);
-		print_all_relations(root->right, fp2);
-		print_all_relations(root->left, fp2);
+		print_node_positive_relations(root, fp2);
+		print_all_positive_relations(root->right, fp2);
+		print_all_positive_relations(root->left, fp2);
+	}
+}
+
+
+
+void print_node_negative_relations(tree_entry *node, clique_tree_entry* neg_root, FILE* fp2){
+	if (neg_root){
+		bucket *iterator = neg_root->different_clique_headbucket->first_bucket;
+		while (iterator){
+			for (int i = 0; i < iterator->numofentries; i++){
+				if (compare(node->path_with_JSON, iterator->identical_entries[i]->path_with_JSON) == 0){
+					fprintf(fp2,"%s, %s, 0\n",node->path_with_JSON, iterator->identical_entries[i]->path_with_JSON);	
+					// sum++;
+				}
+			}
+			iterator = iterator->next_bucket;
+		}
+		// printf("sum: %d\n",sum);			
+		print_node_negative_relations(node, neg_root->right, fp2);
+		print_node_negative_relations(node, neg_root->left, fp2);
+	}
+}
+
+void print_all_negative_relations(tree_entry *root, FILE* fp2){
+	if (root){
+		print_node_negative_relations(root, root->headbucket->different_cliques_root, fp2);
+		print_all_negative_relations(root->right, fp2);
+		print_all_negative_relations(root->left, fp2);
 	}
 }

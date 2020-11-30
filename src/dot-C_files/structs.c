@@ -35,7 +35,6 @@ int compare(char *a, char *b)
 
 tree_entry *insert(tree_entry *T, int x, char *path_with_JSON, char *json_specs)
 {
-
 	if (T == NULL)
 	{
 
@@ -49,6 +48,10 @@ tree_entry *insert(tree_entry *T, int x, char *path_with_JSON, char *json_specs)
 		T->right = NULL;
 
 		T->headbucket = malloc(sizeof(headBucket));
+
+		T->headbucket->key = path_with_JSON;
+		T->headbucket->different_cliques_root = NULL;
+
 		T->headbucket->first_bucket = malloc(sizeof(bucket));
 		T->headbucket->first_bucket->next_bucket = NULL;
 		T->headbucket->first_bucket->identical_entries[0] = T;
@@ -105,61 +108,6 @@ tree_entry *search(tree_entry *T, char *x)
 		return (T);
 	}
 }
-
-/* 
-tree_entry *Delete(tree_entry *T,int x)
-{
-	tree_entry *p;
-	
-	if(T==NULL){
-		return NULL;
-	}
-	else
-		if(x > T->json)		// insert in right subtree
-		{
-			T->right=Delete(T->right,x);
-			if(BF(T)==2)
-				if(BF(T->left)>=0)
-					T=LL(T);
-				else
-					T=LR(T);
-		}
-		else
-			if(x<T->json)
-			{
-				T->left=Delete(T->left,x);
-				if(BF(T)==-2)	//Rebalance during windup
-					if(BF(T->right)<=0)
-						T=RR(T);
-					else
-						T=RL(T);
-			}
-			else
-			{
-				//json to be deleted is found
-				if(T->right!=NULL)
-				{	//delete its inorder succesor
-					p=T->right;
-					
-					while(p->left!= NULL)
-						p=p->left;
-					
-					T->json=p->json;
-					T->right=Delete(T->right,p->json);
-					
-					if(BF(T)==2)//Rebalance during windup
-						if(BF(T->left)>=0)
-							T=LL(T);
-						else
-							T=LR(T);
-				}
-				else
-					return(T->left);
-			}
-	T->ht=height(T);
-	return(T);
-}
-*/
 
 int height(tree_entry *T)
 {
@@ -252,26 +200,6 @@ int BF(tree_entry *T)
 	return (lh - rh);
 }
 
-void preorder(tree_entry *T)
-{
-	if (T != NULL)
-	{
-		printf("%d(Bf=%d)", T->json, BF(T));
-		preorder(T->left);
-		preorder(T->right);
-	}
-}
-
-void inorder(tree_entry *T)
-{
-	if (T != NULL)
-	{
-		inorder(T->left);
-		printf("%d(Bf=%d)", T->json, BF(T));
-		inorder(T->right);
-	}
-}
-
 void free_list_of_buckets(bucket* B){
 	if (B!=NULL){
 		free_list_of_buckets(B->next_bucket);
@@ -291,6 +219,156 @@ void free_node(tree_entry *T){
 	}
 }
 
+
+clique_tree_entry *clique_tree_insert(clique_tree_entry *T, headBucket* negative_clique)
+{
+	if (T == NULL)
+	{
+		T = (clique_tree_entry *)malloc(sizeof(clique_tree_entry));
+		T->left = NULL;
+		T->right = NULL;
+		T->different_clique_headbucket = negative_clique;
+	}
+	// else if (x > T->json) // insert in right subtree
+	else if (compare(negative_clique->key, T->different_clique_headbucket->key) == 1) // insert in right subtree
+
+	{
+		T->right = clique_tree_insert(T->right, negative_clique);
+		if (clique_tree_BF(T) == -2)
+			// if (x > T->right->json)
+			if (compare(negative_clique->key, T->right->different_clique_headbucket->key) == 1)
+				T = clique_tree_RR(T);
+			else
+				T = clique_tree_RL(T);
+	}
+	// else if (x < T->json)
+	else if (compare(negative_clique->key, T->different_clique_headbucket->key) == 0) // insert in left subtree
+	{
+		T->left = clique_tree_insert(T->left, negative_clique);
+		if (clique_tree_BF(T) == 2)
+			// if (x < T->left->json)
+			if (compare(negative_clique->key, T->left->different_clique_headbucket->key) == 0)
+				T = clique_tree_LL(T);
+			else
+				T = clique_tree_LR(T);
+	}
+
+	T->ht = clique_tree_height(T);
+
+	return (T);
+}
+clique_tree_entry *clique_tree_search(clique_tree_entry *T, char *x)
+{
+	if (T == NULL)
+	{
+		return NULL;
+	}
+	// if (x > T->json)
+	if (compare(x, T->different_clique_headbucket->key) == 1)
+	{
+		return (clique_tree_search(T->right, x));
+	}
+	// else if (x < T->json)
+	else if (compare(x, T->different_clique_headbucket->key) == 0)
+	{
+		return (clique_tree_search(T->left, x));
+	}
+	else
+	{
+		// printf("search: found!\n");
+		return (T);
+	}
+}
+int clique_tree_height(clique_tree_entry *T)
+{
+	int lh, rh;
+	if (T == NULL)
+		return (0);
+
+	if (T->left == NULL)
+		lh = 0;
+	else
+		lh = 1 + T->left->ht;
+
+	if (T->right == NULL)
+		rh = 0;
+	else
+		rh = 1 + T->right->ht;
+
+	if (lh > rh)
+		return (lh);
+
+	return (rh);
+}
+
+clique_tree_entry *clique_tree_rotateright(clique_tree_entry *x)
+{
+	clique_tree_entry *y;
+	y = x->left;
+	x->left = y->right;
+	y->right = x;
+	x->ht = clique_tree_height(x);
+	y->ht = clique_tree_height(y);
+	return (y);
+}
+
+clique_tree_entry *clique_tree_rotateleft(clique_tree_entry *x)
+{
+	clique_tree_entry *y;
+	y = x->right;
+	x->right = y->left;
+	y->left = x;
+	x->ht = clique_tree_height(x);
+	y->ht = clique_tree_height(y);
+
+	return (y);
+}
+
+clique_tree_entry *clique_tree_RR(clique_tree_entry *T)
+{
+	T = clique_tree_rotateleft(T);
+	return (T);
+}
+
+clique_tree_entry *clique_tree_LL(clique_tree_entry *T)
+{
+	T = clique_tree_rotateright(T);
+	return (T);
+}
+
+clique_tree_entry *clique_tree_LR(clique_tree_entry *T)
+{
+	T->left = clique_tree_rotateleft(T->left);
+	T = clique_tree_rotateright(T);
+
+	return (T);
+}
+
+clique_tree_entry *clique_tree_RL(clique_tree_entry *T)
+{
+	T->right = clique_tree_rotateright(T->right);
+	T = clique_tree_rotateleft(T);
+	return (T);
+}
+
+int clique_tree_BF(clique_tree_entry *T)
+{
+	int lh, rh;
+	if (T == NULL)
+		return (0);
+
+	if (T->left == NULL)
+		lh = 0;
+	else
+		lh = 1 + T->left->ht;
+
+	if (T->right == NULL)
+		rh = 0;
+	else
+		rh = 1 + T->right->ht;
+
+	return (lh - rh);
+}
 
 char* read_json(char* json_filename)
 {
@@ -319,3 +397,78 @@ char* read_json(char* json_filename)
 	free(buffer);
 	return (specs); // return the stringified version of the json object of each and every .json file.
 }
+
+
+/* 
+tree_entry *Delete(tree_entry *T,int x)
+{
+	tree_entry *p;
+	
+	if(T==NULL){
+		return NULL;
+	}
+	else
+		if(x > T->json)		// insert in right subtree
+		{
+			T->right=Delete(T->right,x);
+			if(BF(T)==2)
+				if(BF(T->left)>=0)
+					T=LL(T);
+				else
+					T=LR(T);
+		}
+		else
+			if(x<T->json)
+			{
+				T->left=Delete(T->left,x);
+				if(BF(T)==-2)	//Rebalance during windup
+					if(BF(T->right)<=0)
+						T=RR(T);
+					else
+						T=RL(T);
+			}
+			else
+			{
+				//json to be deleted is found
+				if(T->right!=NULL)
+				{	//delete its inorder succesor
+					p=T->right;
+					
+					while(p->left!= NULL)
+						p=p->left;
+					
+					T->json=p->json;
+					T->right=Delete(T->right,p->json);
+					
+					if(BF(T)==2)//Rebalance during windup
+						if(BF(T->left)>=0)
+							T=LL(T);
+						else
+							T=LR(T);
+				}
+				else
+					return(T->left);
+			}
+	T->ht=height(T);
+	return(T);
+}
+void preorder(tree_entry *T)
+{
+	if (T != NULL)
+	{
+		printf("%d(Bf=%d)", T->json, BF(T));
+		preorder(T->left);
+		preorder(T->right);
+	}
+}
+
+void inorder(tree_entry *T)
+{
+	if (T != NULL)
+	{
+		inorder(T->left);
+		printf("%d(Bf=%d)", T->json, BF(T));
+		inorder(T->right);
+	}
+}
+*/
