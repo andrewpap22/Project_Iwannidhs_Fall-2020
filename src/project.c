@@ -1,5 +1,7 @@
 #include "headers/structs.h"
 #include "headers/W_handler.h"
+#include "headers/json_parser.h"
+#include "headers/includes_for_parser.h"
 
 #define NUMOFENTRIES 29787
 #define NUMOFWEBSITES 24
@@ -33,6 +35,23 @@ int main(void)
   int relation;
   char *part_of_string;
 
+  // ----------------------------------------------
+
+  /*
+   * Needed for custom json parsing.
+  */
+
+  //char *page_title_value = NULL;
+  char *all_json_values = NULL;
+
+  // all_json_values = All_json_Values("6093.json");
+  // printf("\n%s\n", all_json_values);
+
+  // page_title_value = Page_Title_Value("6093.json");
+  // printf("\n%s\n", page_title_value);
+
+  // ----------------------------------------------
+
   printf("\nAdding json files to database...\n");
 
   //  read json dataset
@@ -55,7 +74,7 @@ int main(void)
 
     //open subdirectories inside the dataset
     dirp_JSON = opendir(file_path);
-    while ((dir_JSON) = readdir(dirp_JSON))
+    while (((dir_JSON) = readdir(dirp_JSON)))
     {
       if (!strcmp(dir_JSON->d_name, ".")) // current directory
       {
@@ -86,12 +105,30 @@ int main(void)
 
       json_specs = read_json(full_json_path);
 
+      //page_title_value = Page_Title_Value(full_json_path);
+      all_json_values = All_json_Values(full_json_path);
+
+      //printf("\n%s\n", page_title_value);
+      printf("\n%s\n", all_json_values);
+
       num_of_json = atoi(strtok(dir_JSON->d_name, "."));
 
       // store everything needed inside our data structures.
       database_root = insert(database_root, num_of_json, name_of_json, json_specs);
     }
   }
+
+  // -----------------------------------
+  // if (page_title_value != NULL)
+  // {
+  //   free(page_title_value);
+  // }
+
+  if (all_json_values != NULL)
+  {
+    free(all_json_values);
+  }
+  // -----------------------------------
 
   printf("All json files have been added.\n\n");
 
@@ -105,6 +142,28 @@ int main(void)
     printf("Can't find W file!\n");
   }
 
+  // char **line1 = malloc(sizeof(char *) * 297651);
+  // char **line2 = malloc(sizeof(char *) * 297651);
+  // int relation_line[297651];
+  // int iterator = 0;
+
+  // FILE *fp3;
+  // char *filename2 = NULL;
+
+  // printf("Enter 1st filename:\n");
+  // read = getline(&filename2, &len, stdin);
+  // if (-1 == read)
+  // {
+  //   printf("No line read\n");
+  // }
+  // json_remover = strstr(filename2, "\n"); //remove "\n" substring from filename
+  // *json_remover = '\0';
+  // filename2 = strcat(filename2, ".csv");
+
+  // printf("\nCreating %s...\n", filename2);
+  // fp3 = fopen(filename2, "w+");
+  // fprintf(fp3, "left_spec,right_spec,label\n");
+
   read = getline(&line, &len, w_fp);
   while ((read = getline(&line, &len, w_fp)) != -1)
   {
@@ -115,7 +174,10 @@ int main(void)
     part_of_string = strtok(NULL, "\n");
     relation = atoi(part_of_string);
     add_relation(database_root, json1, json2, relation);
+
+    // fprintf(fp3, "%s, %s, %d\n",(search(database_root, json1))->specs, (search(database_root, json2))->specs, relation);
   }
+
   printf("All relations are added.\n\n");
 
   FILE *fp2;
