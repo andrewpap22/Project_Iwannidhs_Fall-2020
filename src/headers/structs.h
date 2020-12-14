@@ -17,7 +17,8 @@
 
 typedef struct headBucket
 {
-
+  char* key;
+  struct clique_tree_entry* different_cliques_root;
   struct bucket *first_bucket;
 
 } headBucket;
@@ -45,15 +46,21 @@ typedef struct tree_entry
 
 } tree_entry;
 
+typedef struct clique_tree_entry
+{
+  struct clique_tree_entry *left;
+  struct clique_tree_entry *right;
+  int ht;
+
+  struct headBucket *different_clique_headbucket;
+
+} clique_tree_entry;
+
 /* Basic Binary Search tree operatons for our project. */
 int compare(char *, char *);
+
 tree_entry *insert(tree_entry *, int, char *, char *);
 tree_entry *search(tree_entry *, char *);
-// tree_entry *Delete(tree_entry *,int);
-void preorder(tree_entry *);
-void inorder(tree_entry *);
-void free_list_of_buckets(bucket*);
-void free_node(tree_entry *);
 int height(tree_entry *);
 tree_entry *rotateright(tree_entry *);
 tree_entry *rotateleft(tree_entry *);
@@ -62,6 +69,24 @@ tree_entry *LL(tree_entry *);
 tree_entry *LR(tree_entry *);
 tree_entry *RL(tree_entry *);
 int BF(tree_entry *);
+
+clique_tree_entry *clique_tree_insert(clique_tree_entry*, headBucket*);
+clique_tree_entry *clique_tree_search(clique_tree_entry *, char *);
+int clique_tree_height(clique_tree_entry *);
+clique_tree_entry *clique_tree_rotateright(clique_tree_entry *);
+clique_tree_entry *clique_tree_rotateleft(clique_tree_entry *);
+clique_tree_entry *clique_tree_RR(clique_tree_entry *);
+clique_tree_entry *clique_tree_LL(clique_tree_entry *);
+clique_tree_entry *clique_tree_LR(clique_tree_entry *);
+clique_tree_entry *clique_tree_RL(clique_tree_entry *);
+int clique_tree_BF(clique_tree_entry *);
+
+void free_list_of_buckets(bucket*);
+void free_node(tree_entry *);
+// tree_entry *Delete(tree_entry *,int);
+// void preorder(tree_entry *);
+// void inorder(tree_entry *);
+
 
 /* for ubuntu: sudo apt install libjson-c-dev
  * to use the json-c library 

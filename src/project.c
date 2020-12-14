@@ -131,10 +131,9 @@ int main(void)
   // -----------------------------------
 
   printf("All json files have been added.\n\n");
-
-  printf("Adding relations...\n");
-
   //  read W dataset
+  printf("Adding positive relations...\n");
+
   w_fp = fopen(w_path, "r");
 
   if (w_fp == NULL)
@@ -173,12 +172,27 @@ int main(void)
     strcpy(json2, part_of_string);
     part_of_string = strtok(NULL, "\n");
     relation = atoi(part_of_string);
-    add_relation(database_root, json1, json2, relation);
+    add_positive_relation(database_root, json1, json2, relation);
+  }
+  fclose(w_fp);
+  printf("Adding negative relations...\n");
+  w_fp = fopen(w_path, "r");
 
+  read = getline(&line, &len, w_fp);
+  while ((read = getline(&line, &len, w_fp)) != -1)
+  {
+    part_of_string = strtok(line, ",");
+    strcpy(json1, part_of_string);
+    part_of_string = strtok(NULL, ",");
+    strcpy(json2, part_of_string);
+    part_of_string = strtok(NULL, "\n");
+    relation = atoi(part_of_string);
+    add_negative_relation(database_root, json1, json2, relation);
     // fprintf(fp3, "%s, %s, %d\n",(search(database_root, json1))->specs, (search(database_root, json2))->specs, relation);
   }
 
   printf("All relations are added.\n\n");
+  fclose(w_fp);
 
   FILE *fp2;
   char *filename = NULL;
@@ -196,7 +210,8 @@ int main(void)
   printf("\nCreating %s...\n", filename);
   fp2 = fopen(filename, "w+");
   fprintf(fp2, "left_spec_id,right_spec_id\n");
-  print_all_relations(database_root, fp2);
+  print_all_positive_relations(database_root, fp2);
+  print_all_negative_relations(database_root, fp2);
   fclose(fp2);
   printf("%s created.\n\n", filename);
 
