@@ -2,9 +2,13 @@
 #include "headers/W_handler.h"
 #include "headers/json_parser.h"
 #include "headers/includes_for_parser.h"
+#include "headers/train_set_handler.h"
+
 
 #define NUMOFENTRIES 29787
 #define NUMOFWEBSITES 24
+
+int k = 0;
 
 //read dataset stuff
 int main(void)
@@ -22,7 +26,7 @@ int main(void)
   char *name_of_json;
   char *json_remover;
   char *full_json_path;
-  char *json_specs;
+  // char *json_specs;
 
   //read W stuff
   char *w_path = "../dataset/sigmod_large_labelled_dataset.csv";
@@ -53,7 +57,6 @@ int main(void)
   // ----------------------------------------------
 
   printf("\nAdding json files to database...\n");
-
   //  read json dataset
   while ((dir = readdir(dirp)))
   {
@@ -103,35 +106,26 @@ int main(void)
       json_remover = strstr(name_of_json, ".json"); //remove ".json" substring from all strings
       *json_remover = '\0';
 
-      json_specs = read_json(full_json_path);
+      // json_specs = read_json(full_json_path);  old parser
 
       //page_title_value = Page_Title_Value(full_json_path);
       all_json_values = All_json_Values(full_json_path);
-
+      
       //printf("\n%s\n", page_title_value);
-      printf("\n%s\n", all_json_values);
+      // printf("\n%s\n", all_json_values);
 
       num_of_json = atoi(strtok(dir_JSON->d_name, "."));
-
       // store everything needed inside our data structures.
-      database_root = insert(database_root, num_of_json, name_of_json, json_specs);
+      database_root = insert(database_root, num_of_json, name_of_json, all_json_values);
+      k++;
     }
   }
-
-  // -----------------------------------
-  // if (page_title_value != NULL)
-  // {
-  //   free(page_title_value);
-  // }
-
-  if (all_json_values != NULL)
-  {
-    free(all_json_values);
-  }
-  // -----------------------------------
-
-  printf("All json files have been added.\n\n");
+  printf("All json files have been added(%d in total).\n\n",k);
+  printf("Creating BOW...\n");
+  create_bow_tree(database_root);
+  printf("Bow created.\n\n");
   //  read W dataset
+  return;
   printf("Adding positive relations...\n");
 
   w_fp = fopen(w_path, "r");

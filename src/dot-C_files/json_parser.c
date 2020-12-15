@@ -158,97 +158,63 @@ char *All_json_Values(char *json_filename)
   long file_size;
   char *json_value = NULL;
   char *json_buffer = NULL;
-
-  char *json_labels[] =
-      {
-          "autofocus points",
-          "battery builtin",
-          "battery include",
-          "brand name",
-          "camera modes",
-          "camera type",
-          "color",
-          "effective megapixels",
-          "exposure control",
-          "exposure settings",
-          "focus features",
-          "frequency band",
-          "general features",
-          "gps",
-          "hd movie mode",
-          "image format",
-          "image sensor quantity",
-          "image sensor size",
-          "image stabilization",
-          "included components",
-          "iso equivalencies",
-          "lcd screen size",
-          "lens construction",
-          "lens mount",
-          "longest shutter speed",
-          "max focal length",
-          "max horizontal image resolution",
-          "max vertical image resolution",
-          "max zoom",
-          "maximum frame rate",
-          "maximum image resolution",
-          "maximum shutter speed",
-          "memory card support",
-          "metering characteristics",
-          "min aperture",
-          "min focal length",
-          "min focus distance",
-          "minimum shutter speed",
-          "normalizeddigital zoom",
-          "normalizedheight",
-          "normalizednumber of image sensor pixels",
-          "normalizedoptical zoom",
-          "normalizedweight",
-          "number of resolution modes",
-          "number of scene modes",
-          "pictbridge",
-          "power source",
-          "product line",
-          "product model",
-          "product series",
-          "removable flash memory included",
-          "shortest shutter speed",
-          "software included",
-          "video capture format",
-          "viewfinder type",
-          "white balance",
-          "white balance modes",
-      };
-
-  int array_length = (sizeof(json_labels) / sizeof(char *));
-  //printf("%d\n", array_length);
+  char * line = NULL;
+  size_t len = 0;
+  ssize_t read;
+  char* token;
+  char* character;
+  int i = 0;
 
   json_fp = fopen(json_filename, "r");
   fseek(json_fp, 0L, SEEK_END);
   file_size = ftell(json_fp);
   fseek(json_fp, 0L, SEEK_SET);
+  char* parsed_json = malloc(sizeof(char) * file_size);
+  while ((read = getline(&line, &len, json_fp)) != -1) {
 
-  json_buffer = malloc(sizeof(char) * file_size);
-  fread(json_buffer, file_size, 1, json_fp);
+        character = line;
+        i=0;
+        while (i<read)
+        {
+          if ((*(character+i)==':') && (*(character+i+1)==' ') && (*(character+i+2)=='\"'))
+          {
+            *(line + read - 3) = '\0';
+            parsed_json = strcat(parsed_json," ");
+            // printf("yo\n");
+            parsed_json = strcat(parsed_json,character+i+3);
+            break;
+          }
+          i++;
+        }       
+    }
   fclose(json_fp);
+        // token = strtok(line,"\": \"");
+        // token = strtok(NULL,"\",\n");
+        // if(token!=NULL){
+        //   printf("%s\n",token);
+        // }
 
-  json_value = malloc(file_size * sizeof(char));
-  strcpy(json_value, json_get_var_char(json_buffer, "<page title>"));
+  // token = strtok(NULL,">\": \"");
 
-  for (int i = 0; i < array_length; i++)
-  {
-    if (json_get_var_char(json_buffer, json_labels[i]) == NULL)
-    {
-      json_value = strcat(json_value, "");
-    }
-    else
-    {
-      json_value = strcat(json_value, " ");
-      json_value = strcat(json_value, json_get_var_char(json_buffer, json_labels[i]));
-    }
-  }
+  // token = strtok(NULL,"\0");
 
-  free(json_buffer);
+  // printf("%s\n",token);
+  // json_value = malloc(file_size * sizeof(char));
+  // strcpy(json_value, json_get_var_char(json_buffer, "<page title>"));
 
-  return (json_value);
+  // for (int i = 0; i < array_length; i++)
+  // {
+  //   if (json_get_var_char(json_buffer, json_labels[i]) == NULL)
+  //   {
+  //     json_value = strcat(json_value, "");
+  //   }
+  //   else
+  //   {
+  //     json_value = strcat(json_value, " ");
+  //     json_value = strcat(json_value, json_get_var_char(json_buffer, json_labels[i]));
+  //   }
+  // }
+
+  // free(json_buffer);
+  return (parsed_json);
 }
