@@ -2,6 +2,34 @@
 
 
 int json_key = 0;
+int word_key = 0;
+
+int ** create_bow_array(tree_entry* json_node){
+	bow_tree_entry* bow_root = create_bow_tree(json_node);
+
+	int** bow_array = malloc(word_key*sizeof(int*));
+	for (int i = 0; i < word_key; i++){
+		bow_array[i] = malloc(sizeof(int)*json_key);
+	}
+	get_bow_tree_entries(bow_root, bow_array);
+	printf("%d different words\n",word_key);
+	return bow_array;
+}
+void get_bow_tree_entries(bow_tree_entry* bow_root, int** bow_array){
+	if (bow_root == NULL){
+		return;
+	}
+	else{
+		// printf("%d\n",bow_root->word_key);
+		bow_array[bow_root->word_key] = bow_root->wordcounts;
+		for (int i = 0; i < json_key; i++){
+			// printf("%d\n", bow_array[bow_root->word_key][i]);
+		}
+		
+		get_bow_tree_entries(bow_root->right, bow_array);
+		get_bow_tree_entries(bow_root->left, bow_array);
+	}
+}
 
 bow_tree_entry* create_bow_tree(tree_entry* json_node){
 	add_json_keys(json_node);
@@ -56,14 +84,14 @@ bow_tree_entry* word_to_bow(bow_tree_entry* bow_root, char* word, int jsonkey){
 		return bow_root;
 	}
 	
-	printf("word: %s\n",word);
+	// printf("word: %s\n",word);
 	bow_tree_entry* search_result = bow_search(bow_root, word);
 	if (search_result!=NULL){
 		search_result->wordcounts[jsonkey] += 1; 
 	}
 	else{
-		printf("^^ new word ^^\n");
-		char* new_word = malloc(sizeof(char)*strlen(word));
+		// printf("^^ new word ^^\n");
+		char* new_word = malloc(sizeof(char)*strlen(word)+2);
 		strcpy(new_word,word);
 		bow_root = bow_insert(bow_root, jsonkey, new_word);
 	}
@@ -76,6 +104,8 @@ bow_tree_entry *bow_insert(bow_tree_entry *T, int current_json, char *word)
 	{
 		T = (bow_tree_entry *)malloc(sizeof(bow_tree_entry));
 
+		T->word_key = word_key;
+		word_key++;
 		T->word = word;
 		T->left = NULL;
 		T->right = NULL;

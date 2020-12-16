@@ -7,6 +7,8 @@
 
 #define NUMOFENTRIES 29787
 #define NUMOFWEBSITES 24
+#define NUMOFWORDS 103780
+
 
 int k = 0;
 
@@ -38,6 +40,9 @@ int main(void)
   char *json2 = malloc(sizeof(char) * 50);
   int relation;
   char *part_of_string;
+
+  // Bow stuff
+  int** bow_array;
 
   // ----------------------------------------------
 
@@ -122,10 +127,22 @@ int main(void)
   }
   printf("All json files have been added(%d in total).\n\n",k);
   printf("Creating BOW...\n");
-  create_bow_tree(database_root);
+  // create_bow_tree(database_root);
+  bow_array = create_bow_array(database_root);
   printf("Bow created.\n\n");
-  //  read W dataset
+  sleep(2);
+  for (int i = 0; i < NUMOFENTRIES; i++){
+    printf("%d, %d, %d, %d, %d, %d, %d, %d, %d, %d\n", bow_array[0][i], bow_array[1][i], bow_array[2][i], bow_array[3][i], bow_array[4][i], bow_array[5][i], bow_array[6][i], bow_array[7][i], bow_array[8][i], bow_array[9][i]);
+    printf("^^first 10 colums of BoW^^");
+  }
+  
+
+  // printf("%ld\n",sizeof(bow_array));
+  // printf("%ld\n",sizeof(*bow_array));
+  // printf("%ld\n",sizeof(**bow_array));
+
   return;
+  //  read W dataset
   printf("Adding positive relations...\n");
 
   w_fp = fopen(w_path, "r");

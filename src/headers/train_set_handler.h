@@ -27,6 +27,7 @@ typedef struct bow_tree_entry
   int ht;
 
   char *word; 
+  int word_key;
   int wordcounts[NUMOFENTRIES];
 
 } bow_tree_entry;
@@ -36,6 +37,8 @@ bow_tree_entry* create_bow_tree(tree_entry*);
 bow_tree_entry* add_jsons_to_bow(bow_tree_entry*, tree_entry*);
 bow_tree_entry* json_to_bow(bow_tree_entry*, tree_entry*);
 bow_tree_entry* word_to_bow(bow_tree_entry*, char*, int);
+int ** create_bow_array(tree_entry*);
+void get_bow_tree_entries(bow_tree_entry*, int**);
 
 
 bow_tree_entry *bow_insert(bow_tree_entry *, int, char *);
