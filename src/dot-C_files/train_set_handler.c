@@ -214,6 +214,8 @@ void create_train_set(int** data_array, int num_of_words, tree_entry* database_r
     }
     fclose(fp);
 	fclose(fp_dest);
+	free(json1);
+	free(json2);
 }
 
 double ** create_tf_idf(int** bow_array){
@@ -307,7 +309,8 @@ void get_bow_tree_entries(bow_tree_entry* bow_root, int** bow_array){
 			bow_array[word_key] = bow_root->wordcounts;
 			word_key++;
 			num_of_unique_usefull_words++;
-			// printf("%s ",bow_root->word);
+			/*print dictionary*/
+			//printf("%s ",bow_root->word);
 		}
 		get_bow_tree_entries(bow_root->right, bow_array);
 	}
@@ -360,6 +363,10 @@ bow_tree_entry* word_to_bow(bow_tree_entry* bow_root, char* word, int jsonkey){
 		return bow_root;
 	}
 	// printf("%s\n", word);
+	if (strlen(word)>MAXWORDSIZE){
+		return bow_root;
+	}
+	
 
 	//Lowercase
 	for(int i = 0; i < strlen(word); i++){
@@ -369,7 +376,6 @@ bow_tree_entry* word_to_bow(bow_tree_entry* bow_root, char* word, int jsonkey){
 	/////////////////
     int i = 0; 
     while(i<strlen(word)){
-		//|| (*(word+i)=='(') || (*(word+i)==')') || (*(word+i)=='\\') || (*(word+i)==':') || (*(word+i)=='.') || (*(word+i)=='/') || (*(word+i)=='-')
         if((*(word+i)==',') || (*(word+i)=='(') || (*(word+i)==')') || (*(word+i)==':') || (*(word+i)=='!') || (*(word+i)==';') || (*(word+i)=='\"') || (*(word+i)=='~') || (*(word+i)=='[') || (*(word+i)==']') || (*(word+i)=='{') || (*(word+i)=='}')){
             memmove(&word[i], &word[i + 1], strlen(word) - i);
         }
@@ -377,7 +383,6 @@ bow_tree_entry* word_to_bow(bow_tree_entry* bow_root, char* word, int jsonkey){
     }
 	i=0;
 	while(i<strlen(word)){
-		//|| (*(word+i)=='(') || (*(word+i)==')') || (*(word+i)=='\\') || (*(word+i)==':') || (*(word+i)=='.') || (*(word+i)=='/') || (*(word+i)=='-')
         if((*(word+i)==',') || (*(word+i)=='(') || (*(word+i)==')') || (*(word+i)==':') || (*(word+i)=='!') || (*(word+i)==';') || (*(word+i)=='\"') || (*(word+i)=='~') || (*(word+i)=='[') || (*(word+i)==']') || (*(word+i)=='{') || (*(word+i)=='}')){
             memmove(&word[i], &word[i + 1], strlen(word) - i);
         }

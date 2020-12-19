@@ -27,7 +27,6 @@ int main(void)
   char *name_of_json;
   char *json_remover;
   char *full_json_path;
-  // char *json_specs;
 
   //read W stuff
   char *w_path = "../dataset/sigmod_large_labelled_dataset.csv";
@@ -43,23 +42,9 @@ int main(void)
   // Bow stuff
   int** bow_array;
   double** tf_idf_array;
-
-  // ----------------------------------------------
-
-  /*
-   * Needed for custom json parsing.
-  */
-
-  //char *page_title_value = NULL;
+  //parsing stuff
   char *all_json_values = NULL;
 
-  // all_json_values = All_json_Values("6093.json");
-  // printf("\n%s\n", all_json_values);
-
-  // page_title_value = Page_Title_Value("6093.json");
-  // printf("\n%s\n", page_title_value);
-
-  // ----------------------------------------------
 
   printf("\nAdding json files to database...\n");
   //  read json dataset
@@ -111,13 +96,7 @@ int main(void)
       json_remover = strstr(name_of_json, ".json"); //remove ".json" substring from all strings
       *json_remover = '\0';
 
-      // json_specs = read_json(full_json_path);  old parser
-
-      //page_title_value = Page_Title_Value(full_json_path);
       all_json_values = All_json_Values(full_json_path);
-      
-      //printf("\n%s\n", page_title_value);
-      // printf("\n%s\n", all_json_values);
 
       num_of_json = atoi(strtok(dir_JSON->d_name, "."));
       // store everything needed inside our data structures.
@@ -162,7 +141,6 @@ int main(void)
     part_of_string = strtok(NULL, "\n");
     relation = atoi(part_of_string);
     add_negative_relation(database_root, json1, json2, relation);
-    // fprintf(fp3, "%s, %s, %d\n",(search(database_root, json1))->specs, (search(database_root, json2))->specs, relation);
   }
 
   printf("All relations are added.\n\n");
@@ -171,17 +149,11 @@ int main(void)
   FILE *fp2;
   char *filename = "relations.csv";
 
-  // printf("Enter the filename:\n");
-  // read = getline(&filename, &len, stdin);
-  // if (-1 == read)
-  // {
-  //   printf("No line read\n");
-  // }
   // json_remover = strstr(filename, "\n"); //remove "\n" substring from filename
   // *json_remover = '\0';
   // filename = strcat(filename, ".csv");
 
-  printf("\nCreating %s...\n", filename);
+  printf("Creating %s...\n", filename);
   fp2 = fopen(filename, "w+");
   print_all_positive_relations(database_root, fp2);
   print_all_negative_relations(database_root, fp2);
@@ -189,7 +161,6 @@ int main(void)
   printf("%s created.\n\n", filename);
 
   printf("Creating BOW...\n");
-  // create_bow_tree(database_root);
   bow_array = create_bow_array(database_root);
   // sleep(2);
   // for (int i = 0; i < NUMOFENTRIES; i++){
@@ -210,7 +181,9 @@ int main(void)
   // }
   // printf("TF_IDF created.\n\n");
 
+  printf("Creating Training Set...\n");
   create_train_set(bow_array, NUMOFWORDS, database_root, "relations.csv");
+  printf("Training Set created...\n");
 
   printf("Freeing Database...\n");
   free_node(database_root);
