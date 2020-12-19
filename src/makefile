@@ -9,7 +9,7 @@ HEADER	= headers/structs.h headers/W_handler.h headers/json_parser.h headers/inc
 OUT	= project1
 CC	 = gcc
 FLAGS	 = -g -c -Wall
-LFLAGS	 = -ljson-c
+LFLAGS	 = -ljson-c -lm
 # -g option enables debugging mode 
 # -c flag generates object code for separate files
 

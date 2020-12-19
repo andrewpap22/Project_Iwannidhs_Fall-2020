@@ -6,8 +6,7 @@
 
 
 #define NUMOFENTRIES 29787
-#define NUMOFWEBSITES 24
-#define NUMOFWORDS 103780
+#define NUMOFWORDS 79782
 
 
 int k = 0;
@@ -43,6 +42,7 @@ int main(void)
 
   // Bow stuff
   int** bow_array;
+  double** tf_idf_array;
 
   // ----------------------------------------------
 
@@ -126,22 +126,7 @@ int main(void)
     }
   }
   printf("All json files have been added(%d in total).\n\n",k);
-  printf("Creating BOW...\n");
-  // create_bow_tree(database_root);
-  bow_array = create_bow_array(database_root);
-  printf("Bow created.\n\n");
-  sleep(2);
-  for (int i = 0; i < NUMOFENTRIES; i++){
-    printf("%d, %d, %d, %d, %d, %d, %d, %d, %d, %d\n", bow_array[0][i], bow_array[1][i], bow_array[2][i], bow_array[3][i], bow_array[4][i], bow_array[5][i], bow_array[6][i], bow_array[7][i], bow_array[8][i], bow_array[9][i]);
-    printf("^^first 10 colums of BoW^^");
-  }
-  
 
-  // printf("%ld\n",sizeof(bow_array));
-  // printf("%ld\n",sizeof(*bow_array));
-  // printf("%ld\n",sizeof(**bow_array));
-
-  return;
   //  read W dataset
   printf("Adding positive relations...\n");
 
@@ -151,28 +136,6 @@ int main(void)
   {
     printf("Can't find W file!\n");
   }
-
-  // char **line1 = malloc(sizeof(char *) * 297651);
-  // char **line2 = malloc(sizeof(char *) * 297651);
-  // int relation_line[297651];
-  // int iterator = 0;
-
-  // FILE *fp3;
-  // char *filename2 = NULL;
-
-  // printf("Enter 1st filename:\n");
-  // read = getline(&filename2, &len, stdin);
-  // if (-1 == read)
-  // {
-  //   printf("No line read\n");
-  // }
-  // json_remover = strstr(filename2, "\n"); //remove "\n" substring from filename
-  // *json_remover = '\0';
-  // filename2 = strcat(filename2, ".csv");
-
-  // printf("\nCreating %s...\n", filename2);
-  // fp3 = fopen(filename2, "w+");
-  // fprintf(fp3, "left_spec,right_spec,label\n");
 
   read = getline(&line, &len, w_fp);
   while ((read = getline(&line, &len, w_fp)) != -1)
@@ -206,25 +169,48 @@ int main(void)
   fclose(w_fp);
 
   FILE *fp2;
-  char *filename = NULL;
+  char *filename = "relations.csv";
 
-  printf("Enter the filename:\n");
-  read = getline(&filename, &len, stdin);
-  if (-1 == read)
-  {
-    printf("No line read\n");
-  }
-  json_remover = strstr(filename, "\n"); //remove "\n" substring from filename
-  *json_remover = '\0';
-  filename = strcat(filename, ".csv");
+  // printf("Enter the filename:\n");
+  // read = getline(&filename, &len, stdin);
+  // if (-1 == read)
+  // {
+  //   printf("No line read\n");
+  // }
+  // json_remover = strstr(filename, "\n"); //remove "\n" substring from filename
+  // *json_remover = '\0';
+  // filename = strcat(filename, ".csv");
 
   printf("\nCreating %s...\n", filename);
   fp2 = fopen(filename, "w+");
-  fprintf(fp2, "left_spec_id,right_spec_id\n");
   print_all_positive_relations(database_root, fp2);
   print_all_negative_relations(database_root, fp2);
   fclose(fp2);
   printf("%s created.\n\n", filename);
+
+  printf("Creating BOW...\n");
+  // create_bow_tree(database_root);
+  bow_array = create_bow_array(database_root);
+  // sleep(2);
+  // for (int i = 0; i < NUMOFENTRIES; i++){
+  //   for (int j = 0; j < NUMOFWORDS; j++){
+  //     printf("%d", bow_array[j][i]);
+  //   }
+  //   printf("\n");
+  // }
+  printf("Bow created.\n\n");
+
+  // printf("Creating TF_IDF...\n");
+  // tf_idf_array = create_tf_idf(bow_array);
+  // for (int i = 0; i < NUMOFENTRIES; i++){
+  //   for (int j = 0; j < NUMOFWORDS; j++){
+  //     printf("%lf ", tf_idf_array[j][i]);
+  //   }
+  //   printf("\n");
+  // }
+  // printf("TF_IDF created.\n\n");
+
+  create_train_set(bow_array, NUMOFWORDS, database_root, "relations.csv");
 
   printf("Freeing Database...\n");
   free_node(database_root);

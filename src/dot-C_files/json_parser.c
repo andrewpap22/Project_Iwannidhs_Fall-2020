@@ -164,29 +164,50 @@ char *All_json_Values(char *json_filename)
   char* token;
   char* character;
   int i = 0;
+  int num_of_lines = 0; 
+  int current_line = 0;
 
   json_fp = fopen(json_filename, "r");
   fseek(json_fp, 0L, SEEK_END);
   file_size = ftell(json_fp);
   fseek(json_fp, 0L, SEEK_SET);
   char* parsed_json = malloc(sizeof(char) * file_size);
+
+  while ((read = getline(&line, &len, json_fp)) != -1) {
+    num_of_lines++;
+  }
+  fseek(json_fp, 0L, SEEK_SET);
   while ((read = getline(&line, &len, json_fp)) != -1) {
 
-        character = line;
-        i=0;
-        while (i<read)
-        {
-          if ((*(character+i)==':') && (*(character+i+1)==' ') && (*(character+i+2)=='\"'))
-          {
-            *(line + read - 3) = '\0';
-            parsed_json = strcat(parsed_json," ");
-            // printf("yo\n");
-            parsed_json = strcat(parsed_json,character+i+3);
-            break;
-          }
-          i++;
-        }       
+    character = line;
+    if (current_line == num_of_lines-2){
+      i=0;
+      while (i<read){
+        if ((*(character+i)==':') && (*(character+i+1)==' ') && (*(character+i+2)=='\"')){
+          *(line + read - 2) = '\0';
+          parsed_json = strcat(parsed_json," ");
+          // printf("yo\n");
+          parsed_json = strcat(parsed_json,character+i+3);
+          break;
+        }
+        i++;
+      }
     }
+    else{
+      i=0;
+      while (i<read){
+        if ((*(character+i)==':') && (*(character+i+1)==' ') && (*(character+i+2)=='\"')){
+          *(line + read - 3) = '\0';
+          parsed_json = strcat(parsed_json," ");
+          // printf("yo\n");
+          parsed_json = strcat(parsed_json,character+i+3);
+          break;
+        }
+        i++;
+      }    
+    }   
+    current_line ++;
+  }
   fclose(json_fp);
         // token = strtok(line,"\": \"");
         // token = strtok(NULL,"\",\n");
