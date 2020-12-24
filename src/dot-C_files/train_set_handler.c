@@ -174,7 +174,7 @@ int stopword_check(char* word){
     }
 	return 0;
 }
-void create_train_set(int** data_array, int num_of_words, tree_entry* database_root, char* relations_file){
+void create_train_set_tfidf(float** data_array, int num_of_words, tree_entry* database_root, char* relations_file){
 	FILE * fp;
 	FILE * fp_dest;
     char * line = NULL;
@@ -184,7 +184,52 @@ void create_train_set(int** data_array, int num_of_words, tree_entry* database_r
 	char* json1 = malloc(40*sizeof(char));
 	char* json2 = malloc(40*sizeof(char));
 	int relation;
-	int num;
+	float num;
+	tree_entry* entry1;
+	tree_entry* entry2;
+
+	fp_dest = fopen("Train_Set", "w");
+    fp = fopen(relations_file, "r");
+    if (fp == NULL){
+        exit(EXIT_FAILURE);
+	}
+
+    while ((read = getline(&line, &len, fp)) != -1) {
+	
+		part_of_string = strtok(line, ", "); 
+		strcpy(json1, part_of_string);
+		part_of_string = strtok(NULL, ", "); 
+		strcpy(json2, part_of_string);
+		part_of_string = strtok(NULL, "\0"); 
+		relation = atoi(part_of_string);
+        // printf("%s ", json1);
+		// printf("%s ", json2);
+		entry1 = search(database_root,json1);
+		entry2 = search(database_root,json2);
+
+		for (int i = 0; i < 1000; i++){
+			num = (data_array[i][entry1->json] - data_array[i][entry2->json]);
+			fprintf(fp_dest, "%f, ",num);
+		}
+		fprintf(fp_dest, "%d\n",relation);
+    }
+    fclose(fp);
+	fclose(fp_dest);
+	free(json1);
+	free(json2);
+}
+
+void create_train_set_bow(int** data_array, int num_of_words, tree_entry* database_root, char* relations_file){
+	FILE * fp;
+	FILE * fp_dest;
+    char * line = NULL;
+    size_t len = 0;
+    ssize_t read;
+	char* part_of_string;
+	char* json1 = malloc(40*sizeof(char));
+	char* json2 = malloc(40*sizeof(char));
+	int relation;
+	float num;
 	tree_entry* entry1;
 	tree_entry* entry2;
 
@@ -208,7 +253,7 @@ void create_train_set(int** data_array, int num_of_words, tree_entry* database_r
 
 		for (int i = 0; i < 1000; i++){
 			num = (data_array[i][entry1->json] - data_array[i][entry2->json]);
-			fprintf(fp_dest, "%d, ",num);
+			fprintf(fp_dest, "%f, ",num);
 		}
 		fprintf(fp_dest, "%d\n",relation);
     }
@@ -218,11 +263,11 @@ void create_train_set(int** data_array, int num_of_words, tree_entry* database_r
 	free(json2);
 }
 
-double ** create_tf_idf(int** bow_array){
+float ** create_tf_idf(int** bow_array){
 	int word_count = num_of_unique_usefull_words;
 	int json_count = json_key;
-	printf("word_count %d\n",word_count);
-	printf("json_count %d\n",json_count);
+	// printf("word_count %d\n",word_count);
+	// printf("json_count %d\n",json_count);
 
 	int json_total_words[json_count];	//num of words for every json
 	int jsons_including_word_array[word_count];	//num of jsons that every word appears in atleast once
@@ -242,42 +287,41 @@ double ** create_tf_idf(int** bow_array){
 			}
 		}
 	}
-	for (int cur_json = 0; cur_json < json_count; cur_json++){
-		printf("%d\n",json_total_words[cur_json]);
-	}
-	double tf;
-	double idf;
-	double** tf_idf_array = malloc(word_count*sizeof(double*));
-
-	
+	float tf;
+	float idf;
+	float** tf_idf_array = malloc(word_count*sizeof(float*));
+	// for (int cur_word = 0; cur_word < word_count; cur_word++){
+	// 	for (int cur_json = 0; cur_json < json_count; cur_json++){
+	// 		printf("%d\n",cur_word);
+	// 		tf_idf_array[cur_word][cur_json] = 0;
+	// 	}
+	// }
 	//create tf_idf_array
 	for (int cur_word = 0; cur_word < word_count; cur_word++){
 		//allocate tf_idf_array column by column
-		tf_idf_array[cur_word] = malloc(sizeof(double)*json_count);
+		tf_idf_array[cur_word] = malloc(sizeof(float)*json_count);
 		if (jsons_including_word_array[cur_word] == 0){
 			printf("Empty column!?!?\n");
 			break;
 		}
-		
-		idf = log10f(((double)(json_count))/((double)(jsons_including_word_array[cur_word])));
-		// printf("total count:                %lf\n",(double)json_count);
-		// printf("jsons_including_word_array: %lf\n",(double)jsons_including_word_array[cur_word]);
+	}
+	//fill tf_idf_array
+	for (int cur_word = 0; cur_word < word_count; cur_word++){
+		idf = log10f(((float)(json_count))/((float)(jsons_including_word_array[cur_word])));
 		// printf("idf:                        %lf\n\n",idf);
 		for (int cur_json = 0; cur_json < json_count; cur_json++){
 			if (bow_array[cur_word][cur_json] == 0){
 				tf = 0;
 			}
 			else{
-				tf = (double)bow_array[cur_word][cur_json]/(double)json_total_words[cur_word];
+				tf = (float)bow_array[cur_word][cur_json]/(float)json_total_words[cur_json];
 			}
-			
-			// printf("bow entry:   %lf\n",(double)bow_array[cur_word][cur_json]);
-			printf("total words: %lf\n",(double)json_total_words[cur_word]);
 			// printf("tf:          %lf\n\n",tf);
+			// printf("tf idf:     %lf\n", tf*idf);
 			tf_idf_array[cur_word][cur_json] = tf*idf;
 		}
-		// printf("%d\n",cur_word);
 		// free(bow_array[cur_word]);
+		// printf("%d\n",cur_word);
 	}
 	return tf_idf_array;
 }
@@ -292,7 +336,6 @@ int ** create_bow_array(tree_entry* json_node){
 	}
 	printf("%d different words in BoW\n",num_of_unique_words);
 	get_bow_tree_entries(bow_root, bow_array);
-	printf("\n");
 	printf("%d different words in BoW after stopword removal\n",num_of_unique_usefull_words);
 
 	return bow_array;

@@ -5,14 +5,14 @@
 #include "headers/train_set_handler.h"
 
 
-#define NUMOFENTRIES 29787
-#define NUMOFWORDS 79782
+#define NUMOFENTRIES 29787  // 29787 jsons
+#define NUMOFWORDS 42329  // 42329 different words
 
 
 int k = 0;
 
 //read dataset stuff
-int main(void)
+int main(int argc,char** argv)
 {
 
   char *absolute_path = "../dataset/camera_specs/2013_camera_specs";
@@ -41,7 +41,7 @@ int main(void)
 
   // Bow stuff
   int** bow_array;
-  double** tf_idf_array;
+  float** tf_idf_array;
   //parsing stuff
   char *all_json_values = NULL;
 
@@ -162,28 +162,29 @@ int main(void)
 
   printf("Creating BOW...\n");
   bow_array = create_bow_array(database_root);
-  // sleep(2);
-  // for (int i = 0; i < NUMOFENTRIES; i++){
-  //   for (int j = 0; j < NUMOFWORDS; j++){
-  //     printf("%d", bow_array[j][i]);
-  //   }
-  //   printf("\n");
-  // }
+
   printf("Bow created.\n\n");
 
-  // printf("Creating TF_IDF...\n");
-  // tf_idf_array = create_tf_idf(bow_array);
+  printf("Creating TF_IDF...\n");
+  tf_idf_array = create_tf_idf(bow_array);
+  printf("TF_IDF created.\n\n");
   // for (int i = 0; i < NUMOFENTRIES; i++){
   //   for (int j = 0; j < NUMOFWORDS; j++){
   //     printf("%lf ", tf_idf_array[j][i]);
   //   }
   //   printf("\n");
   // }
-  // printf("TF_IDF created.\n\n");
 
-  printf("Creating Training Set...\n");
-  create_train_set(bow_array, NUMOFWORDS, database_root, "relations.csv");
-  printf("Training Set created...\n");
+  if(strcmp(argv[1],"bow")==0){
+    printf("Creating Training Set using BoW...\n");
+    create_train_set_bow(bow_array, NUMOFWORDS, database_root, "relations.csv");
+    printf("Training Set created...\n");
+  }
+  else if(strcmp(argv[1],"tf_idf")==0){
+    printf("Creating Training Set using tf idf...\n");
+    create_train_set_tfidf(tf_idf_array, NUMOFWORDS, database_root, "relations.csv");
+    printf("Training Set created...\n");
+  }
 
   printf("Freeing Database...\n");
   free_node(database_root);
