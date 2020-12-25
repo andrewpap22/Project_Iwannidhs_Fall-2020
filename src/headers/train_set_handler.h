@@ -19,6 +19,7 @@
 #define NUMOFSTOPWORDS 154
 #define NUMOFENTRIES 29787
 #define MAXWORDSIZE 7
+#define WORDS_FOR_DATASET 100
 // #define WORD_BUFFER 50
 
 typedef struct bow_tree_entry
@@ -33,8 +34,8 @@ typedef struct bow_tree_entry
 
 } bow_tree_entry;
 
-void create_train_set_tfidf(float**, int, tree_entry*, char*);
-void create_train_set_bow(int**, int, tree_entry*, char*);
+void create_train_set_tfidf(float**, int, tree_entry*, char*, char*);
+void create_train_set_bow(int**, int, tree_entry*, char*, char*);
 int stopword_check(char*);
 void add_json_keys(tree_entry*);
 bow_tree_entry* create_bow_tree(tree_entry*);

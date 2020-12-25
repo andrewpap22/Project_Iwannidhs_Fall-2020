@@ -45,7 +45,14 @@ int main(int argc,char** argv)
   //parsing stuff
   char *all_json_values = NULL;
 
-
+  if(argv[1]==NULL){
+    printf("Wrong arguments. Type %s bow/tf_idf\n", argv[0]);
+    return -1;
+  }
+  if((strcmp(argv[1],"bow")!=0) && (strcmp(argv[1],"tf_idf")!=0)){
+    printf("Wrong arguments. Type %s bow/tf_idf\n", argv[0]);
+    return -1;
+  }
   printf("\nAdding json files to database...\n");
   //  read json dataset
   while ((dir = readdir(dirp)))
@@ -147,18 +154,25 @@ int main(int argc,char** argv)
   fclose(w_fp);
 
   FILE *fp2;
-  char *filename = "relations.csv";
+  FILE *fp3;
+  char *positive_relations = "positive_relations.csv";
+  char *negative_relations = "negative_relations.csv";
 
   // json_remover = strstr(filename, "\n"); //remove "\n" substring from filename
   // *json_remover = '\0';
   // filename = strcat(filename, ".csv");
 
-  printf("Creating %s...\n", filename);
-  fp2 = fopen(filename, "w+");
+  printf("Creating %s...\n", positive_relations);
+  fp2 = fopen(positive_relations, "w+");
   print_all_positive_relations(database_root, fp2);
-  print_all_negative_relations(database_root, fp2);
   fclose(fp2);
-  printf("%s created.\n\n", filename);
+  printf("%s created.\n\n", positive_relations);
+
+  printf("Creating %s...\n", negative_relations);
+  fp3 = fopen(negative_relations, "w+");
+  print_all_negative_relations(database_root, fp3);
+  fclose(fp2);
+  printf("%s created.\n\n", negative_relations);
 
   printf("Creating BOW...\n");
   bow_array = create_bow_array(database_root);
@@ -177,12 +191,12 @@ int main(int argc,char** argv)
 
   if(strcmp(argv[1],"bow")==0){
     printf("Creating Training Set using BoW...\n");
-    create_train_set_bow(bow_array, NUMOFWORDS, database_root, "relations.csv");
+    create_train_set_bow(bow_array, NUMOFWORDS, database_root, positive_relations, negative_relations);
     printf("Training Set created...\n");
   }
   else if(strcmp(argv[1],"tf_idf")==0){
     printf("Creating Training Set using tf idf...\n");
-    create_train_set_tfidf(tf_idf_array, NUMOFWORDS, database_root, "relations.csv");
+    create_train_set_tfidf(tf_idf_array, NUMOFWORDS, database_root, positive_relations, negative_relations);
     printf("Training Set created...\n");
   }
 

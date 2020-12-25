@@ -174,9 +174,10 @@ int stopword_check(char* word){
     }
 	return 0;
 }
-void create_train_set_tfidf(float** data_array, int num_of_words, tree_entry* database_root, char* relations_file){
+void create_train_set_tfidf(float** data_array, int num_of_words, tree_entry* database_root, char* positive_relations_file, char* negative_relations_file){
 	FILE * fp;
-	FILE * fp_dest;
+	FILE * fp_train;
+	FILE * fp_test;
     char * line = NULL;
     size_t len = 0;
     ssize_t read;
@@ -187,13 +188,41 @@ void create_train_set_tfidf(float** data_array, int num_of_words, tree_entry* da
 	float num;
 	tree_entry* entry1;
 	tree_entry* entry2;
-
-	fp_dest = fopen("Train_Set", "w");
-    fp = fopen(relations_file, "r");
-    if (fp == NULL){
+	char c;
+	int positive_line_count = 0;
+	int negative_line_count = 0;
+	fp_train = fopen("Train_Set.csv", "w");
+	fp_test = fopen("Test_Set.csv", "w");
+// read from positive relations / write on train and test
+    fp = fopen(positive_relations_file, "r");
+    if (fp == NULL)
         exit(EXIT_FAILURE);
+	for(c = getc(fp); c != EOF; c = getc(fp)) {
+		if (c == '\n'){ // Increment positive_line_count if this character is newline 
+			positive_line_count ++; 
+		}
 	}
+	printf("%d lines from positive relations file to train\n",(positive_line_count*4)/5);
+	fseek(fp, 0L, SEEK_SET);
+	for (int j = 0; j < (positive_line_count*4)/5; j++){
+		// printf("%d\n",j);
+		read = getline(&line, &len, fp);
+		part_of_string = strtok(line, ", "); 
+		strcpy(json1, part_of_string);
+		part_of_string = strtok(NULL, ", "); 
+		strcpy(json2, part_of_string);
+		part_of_string = strtok(NULL, "\0"); 
+		relation = atoi(part_of_string);
+		entry1 = search(database_root,json1);
+		entry2 = search(database_root,json2);
 
+		for (int i = 0; i < WORDS_FOR_DATASET; i++){
+			num = (data_array[i][entry1->json] - data_array[i][entry2->json]);
+			fprintf(fp_train, "%f, ",num);
+		}
+		fprintf(fp_train, "%d\n",relation);
+	}
+	//get data to put to test set
     while ((read = getline(&line, &len, fp)) != -1) {
 	
 		part_of_string = strtok(line, ", "); 
@@ -202,26 +231,74 @@ void create_train_set_tfidf(float** data_array, int num_of_words, tree_entry* da
 		strcpy(json2, part_of_string);
 		part_of_string = strtok(NULL, "\0"); 
 		relation = atoi(part_of_string);
-        // printf("%s ", json1);
-		// printf("%s ", json2);
 		entry1 = search(database_root,json1);
 		entry2 = search(database_root,json2);
 
-		for (int i = 0; i < 1000; i++){
+		for (int i = 0; i < WORDS_FOR_DATASET; i++){
 			num = (data_array[i][entry1->json] - data_array[i][entry2->json]);
-			fprintf(fp_dest, "%f, ",num);
+			fprintf(fp_test, "%f, ",num);
 		}
-		fprintf(fp_dest, "%d\n",relation);
+		fprintf(fp_test, "%d\n",relation);
+    }
+	fclose(fp);
+// read from negative relations / write on train and test
+    fp = fopen(negative_relations_file, "r");
+    if (fp == NULL)
+        exit(EXIT_FAILURE);
+	for(c = getc(fp); c != EOF; c = getc(fp)) {
+		if (c == '\n'){ // Increment negative_line_count if this character is newline 
+			negative_line_count ++; 
+		}
+	}
+	// printf("%d lines from negative relations file to train\n",(negative_line_count*4)/5);
+	fseek(fp, 0L, SEEK_SET);
+	for (int j = 0; j < (negative_line_count*4)/5; j++){
+		// printf("%d\n",j);
+		read = getline(&line, &len, fp);
+		part_of_string = strtok(line, ", "); 
+		strcpy(json1, part_of_string);
+		part_of_string = strtok(NULL, ", "); 
+		strcpy(json2, part_of_string);
+		part_of_string = strtok(NULL, "\0"); 
+		relation = atoi(part_of_string);
+		entry1 = search(database_root,json1);
+		entry2 = search(database_root,json2);
+
+		for (int i = 0; i < WORDS_FOR_DATASET; i++){
+			num = (data_array[i][entry1->json] - data_array[i][entry2->json]);
+			fprintf(fp_train, "%f, ",num);
+		}
+		fprintf(fp_train, "%d\n",relation);
+	}
+	//get data to put to test set
+    while ((read = getline(&line, &len, fp)) != -1) {
+	
+		part_of_string = strtok(line, ", "); 
+		strcpy(json1, part_of_string);
+		part_of_string = strtok(NULL, ", "); 
+		strcpy(json2, part_of_string);
+		part_of_string = strtok(NULL, "\0"); 
+		relation = atoi(part_of_string);
+		entry1 = search(database_root,json1);
+		entry2 = search(database_root,json2);
+
+		for (int i = 0; i < WORDS_FOR_DATASET; i++){
+			num = (data_array[i][entry1->json] - data_array[i][entry2->json]);
+			fprintf(fp_test, "%f, ",num);
+		}
+		fprintf(fp_test, "%d\n",relation);
     }
     fclose(fp);
-	fclose(fp_dest);
+	fclose(fp_train);
+	fclose(fp_test);
 	free(json1);
 	free(json2);
 }
 
-void create_train_set_bow(int** data_array, int num_of_words, tree_entry* database_root, char* relations_file){
+void create_train_set_bow(int** data_array, int num_of_words, tree_entry* database_root, char* positive_relations_file, char* negative_relations_file){
 	FILE * fp;
-	FILE * fp_dest;
+	FILE * fp_train;
+	FILE * fp_test;
     char * line = NULL;
     size_t len = 0;
     ssize_t read;
@@ -229,15 +306,44 @@ void create_train_set_bow(int** data_array, int num_of_words, tree_entry* databa
 	char* json1 = malloc(40*sizeof(char));
 	char* json2 = malloc(40*sizeof(char));
 	int relation;
-	float num;
+	int num;
 	tree_entry* entry1;
 	tree_entry* entry2;
-
-	fp_dest = fopen("Train_Set", "w");
-    fp = fopen(relations_file, "r");
+	char c;
+	int positive_line_count = 0;
+	int negative_line_count = 0;
+	fp_train = fopen("Train_Set.csv", "w");
+	fp_test = fopen("Test_Set.csv", "w");
+// read from positive relations / write on train and test
+    fp = fopen(positive_relations_file, "r");
     if (fp == NULL)
         exit(EXIT_FAILURE);
+	for(c = getc(fp); c != EOF; c = getc(fp)) {
+		if (c == '\n'){ // Increment positive_line_count if this character is newline 
+			positive_line_count ++; 
+		}
+	}
+	// printf("%d lines from positive relations file to train\n",(positive_line_count*4)/5);
+	fseek(fp, 0L, SEEK_SET);
+	for (int j = 0; j < (positive_line_count*4)/5; j++){
+		// printf("%d\n",j);
+		read = getline(&line, &len, fp);
+		part_of_string = strtok(line, ", "); 
+		strcpy(json1, part_of_string);
+		part_of_string = strtok(NULL, ", "); 
+		strcpy(json2, part_of_string);
+		part_of_string = strtok(NULL, "\0"); 
+		relation = atoi(part_of_string);
+		entry1 = search(database_root,json1);
+		entry2 = search(database_root,json2);
 
+		for (int i = 0; i < WORDS_FOR_DATASET; i++){
+			num = (data_array[i][entry1->json] - data_array[i][entry2->json]);
+			fprintf(fp_train, "%d, ",num);
+		}
+		fprintf(fp_train, "%d\n",relation);
+	}
+	//get data to put to test set
     while ((read = getline(&line, &len, fp)) != -1) {
 	
 		part_of_string = strtok(line, ", "); 
@@ -246,19 +352,66 @@ void create_train_set_bow(int** data_array, int num_of_words, tree_entry* databa
 		strcpy(json2, part_of_string);
 		part_of_string = strtok(NULL, "\0"); 
 		relation = atoi(part_of_string);
-        // printf("%s ", json1);
-		// printf("%s ", json2);
 		entry1 = search(database_root,json1);
 		entry2 = search(database_root,json2);
 
-		for (int i = 0; i < 1000; i++){
+		for (int i = 0; i < WORDS_FOR_DATASET; i++){
 			num = (data_array[i][entry1->json] - data_array[i][entry2->json]);
-			fprintf(fp_dest, "%f, ",num);
+			fprintf(fp_test, "%d, ",num);
 		}
-		fprintf(fp_dest, "%d\n",relation);
+		fprintf(fp_test, "%d\n",relation);
+    }
+	fclose(fp);
+// read from negative relations / write on train and test
+    fp = fopen(negative_relations_file, "r");
+    if (fp == NULL)
+        exit(EXIT_FAILURE);
+	for(c = getc(fp); c != EOF; c = getc(fp)) {
+		if (c == '\n'){ // Increment negative_line_count if this character is newline 
+			negative_line_count ++; 
+		}
+	}
+	printf("%d lines from negative relations file to train\n",(negative_line_count*4)/5);
+	fseek(fp, 0L, SEEK_SET);
+	for (int j = 0; j < (negative_line_count*4)/5; j++){
+		// printf("%d\n",j);
+		read = getline(&line, &len, fp);
+		part_of_string = strtok(line, ", "); 
+		strcpy(json1, part_of_string);
+		part_of_string = strtok(NULL, ", "); 
+		strcpy(json2, part_of_string);
+		part_of_string = strtok(NULL, "\0"); 
+		relation = atoi(part_of_string);
+		entry1 = search(database_root,json1);
+		entry2 = search(database_root,json2);
+
+		for (int i = 0; i < WORDS_FOR_DATASET; i++){
+			num = (data_array[i][entry1->json] - data_array[i][entry2->json]);
+			fprintf(fp_train, "%d, ",num);
+		}
+		fprintf(fp_train, "%d\n",relation);
+	}
+	//get data to put to test set
+    while ((read = getline(&line, &len, fp)) != -1) {
+	
+		part_of_string = strtok(line, ", "); 
+		strcpy(json1, part_of_string);
+		part_of_string = strtok(NULL, ", "); 
+		strcpy(json2, part_of_string);
+		part_of_string = strtok(NULL, "\0"); 
+		relation = atoi(part_of_string);
+		entry1 = search(database_root,json1);
+		entry2 = search(database_root,json2);
+
+		for (int i = 0; i < WORDS_FOR_DATASET; i++){
+			num = (data_array[i][entry1->json] - data_array[i][entry2->json]);
+			fprintf(fp_test, "%d, ",num);
+		}
+		fprintf(fp_test, "%d\n",relation);
     }
     fclose(fp);
-	fclose(fp_dest);
+	fclose(fp_train);
+	fclose(fp_test);
 	free(json1);
 	free(json2);
 }

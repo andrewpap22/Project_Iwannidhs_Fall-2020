@@ -37,3 +37,4 @@ src/dot-C_files/train_set_handler.o: dot-C_files/train_set_handler.c
 # clean house
 clean:
 	rm -f $(OBJS) $(OUT)
+	rm *.csv
