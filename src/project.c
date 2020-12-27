@@ -188,13 +188,17 @@ int main(int argc,char** argv)
   //   }
   //   printf("\n");
   // }
-
+// return;
   if(strcmp(argv[1],"bow")==0){
+    printf("Improving BoW...\n");
+    bow_array = improve_bow(bow_array);
     printf("Creating Training Set using BoW...\n");
     create_train_set_bow(bow_array, NUMOFWORDS, database_root, positive_relations, negative_relations);
     printf("Training Set created...\n");
   }
   else if(strcmp(argv[1],"tf_idf")==0){
+    printf("Improving TF_IDF...\n");
+    tf_idf_array = improve_tf_idf(tf_idf_array);
     printf("Creating Training Set using tf idf...\n");
     create_train_set_tfidf(tf_idf_array, NUMOFWORDS, database_root, positive_relations, negative_relations);
     printf("Training Set created...\n");
