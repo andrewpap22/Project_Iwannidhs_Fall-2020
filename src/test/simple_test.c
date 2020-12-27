@@ -187,32 +187,25 @@ void test_All_json_Values(void){
     int len1 = 0 ,len2 = 0;
     int cm = 0;
     // Store a json into a string
-    char* str = "Polaroid Is426 16 Megapixel Compact Camera - Red - 2.4\\\" Lcd - 4x Optical Zoom - Pictbridge IS426RED Price Comparison at Buy.net Polaroid Yes Scene Modes: Portrait Night Auto No No 1 B00DJGZIU4 Yes iS426 No";
+    char* str = " Polaroid Is426 16 Megapixel Compact Camera - Red - 2.4\\\" Lcd - 4x Optical Zoom - Pictbridge IS426RED Price Comparison at Buy.net Polaroid Yes Scene Modes: Portrait Night Auto No No 1 B00DJGZIU4 Yes iS426 No";
 
     // First Test
     // Give the path with the json file that we are going to compare with the static variable
     full_json_path = "../../dataset/camera_specs/2013_camera_specs/buy.net/4236.json";
 
-    // Call the function read_json
-    //json_str = All_json_Values();
+    // Call the function All_json_Values
     json_specs = All_json_Values(full_json_path);
-    printf("\n");
-    printf("%s\n", json_specs);
-    printf("\n");
-    printf("%s\n", str);
 
     // Compare the static string with the result of the testing function - they have to be same
-    cm = compare(str,json_specs);
-    TEST_CHECK(cm == 3);
-    TEST_MSG("Expected: %d", 3);
+    cm = strcmp(str,json_specs);
+    TEST_CHECK(cm == 0);
+    TEST_MSG("Expected: %d", 0);
     TEST_MSG("Produced: %d", cm);
 
     // Second Test
     // Testing the length of the 2 strings - they must have the same length
     len1 = strlen(str);
     len2 = strlen(json_specs);
-    printf("str %d\n", len1 );
-    printf("json_specs %d\n", len2 );
 
     TEST_CHECK(len1 == len2);
     TEST_MSG("Expected: %d", TRUE);
@@ -223,11 +216,11 @@ void test_All_json_Values(void){
     full_json_path = "../../dataset/camera_specs/2013_camera_specs/buy.net/4233.json";
 
     // Call the function read_json
-    json_specs = read_json(full_json_path);
+    json_specs = All_json_Values(full_json_path);
 
     // Compare the static string with the result of the testing function - they have to be different 
-    cm = compare(str,json_specs);
-    TEST_CHECK(cm == 1);
+    cm = strcmp(str,json_specs);
+    TEST_CHECK(cm != 0);
     TEST_MSG("Expected: %d", 1);
     TEST_MSG("Produced: %d", cm);
 
@@ -817,7 +810,7 @@ void test_clique_tree_search(void){
 }
 
 // Testing the function print_all_relations in w_handler.c
-/*void test_print_all_relations(void){
+void test_print_node_relations(void){
     tree_entry *database_root = NULL;
     char *json_specs;
     int num_of_json  = 0; 
@@ -826,7 +819,9 @@ void test_clique_tree_search(void){
     FILE *fp1;
     FILE *fp2;
     FILE *fp3;
-    fp1 = fopen("Unit_test.csv", "w+");
+    FILE *fp4;
+    fp1 = fopen("Unit_test_pos.csv", "w+");
+    fp2 = fopen("Unit_test_neg.csv", "w+");
     int diff;
     int line, col;
 
@@ -870,35 +865,151 @@ void test_clique_tree_search(void){
     json_specs = read_json(full_json_path);
     database_root = insert(database_root, num_of_json, name_of_json, json_specs);
 
-    // Call add_relation to relate the json entries
-    add_relation(database_root,"buy.net//4239","www.alibaba.com//5449",1);
-    add_relation(database_root,"buy.net//4233","buy.net//4236",1);
-    add_relation(database_root,"buy.net//4236","www.alibaba.com//5449",0);
-    add_relation(database_root,"buy.net//4236","buy.net//4233",1);
-    add_relation(database_root,"www.cambuy.com.au//5","buy.net//4239",1);
-    add_relation(database_root,"www.cambuy.com.au//5","buy.net//4233",0);
+// Call add_positive_realtion to test the function
+    add_positive_relation(database_root,"buy.net//4239","www.alibaba.com//5449",1);
+    add_positive_relation(database_root,"buy.net//4233","buy.net//4236",1);
+    add_positive_relation(database_root,"buy.net//4236","www.alibaba.com//5449",0);
+    add_positive_relation(database_root,"buy.net//4236","buy.net//4233",1);
+    add_positive_relation(database_root,"www.cambuy.com.au//5","buy.net//4239",1);
+    add_positive_relation(database_root,"www.cambuy.com.au//5","buy.net//4233",0);
+
+    // Call add_negative_realtion to test the function
+    add_negative_relation(database_root,"buy.net//4239","www.alibaba.com//5449",1);
+    add_negative_relation(database_root,"buy.net//4233","buy.net//4236",1);
+    add_negative_relation(database_root,"buy.net//4236","www.alibaba.com//5449",0);
+    add_negative_relation(database_root,"buy.net//4236","buy.net//4233",1);
+    add_negative_relation(database_root,"www.cambuy.com.au//5","buy.net//4239",1);
+    add_negative_relation(database_root,"www.cambuy.com.au//5","buy.net//4233",0);
+
 
     // Call print_all_relations to write a .csv file 
-    fprintf(fp1, "left_spec_id,right_spec_id\n");
-    print_all_relations(database_root, fp1);
+    print_all_positive_relations(database_root, fp1);
+    print_all_negative_relations(database_root, fp2);
     fclose(fp1);
+    fclose(fp2);
 
     // Preparation of the comparison of 2 .csv files 
-    fp2 = fopen("Unit_test.csv", "r");        // open the already written .csv file
-    fp3 = fopen("Unit_test_byme.csv", "r");   // open the test .csv file
-    
+    fp1 = fopen("Unit_test_pos.csv", "r");        // open the already written .csv file
+    fp3 = fopen("test_pos.csv", "r");   // open the test .csv file
+   
     // Call the helper_comparison of 2 .csv files
-    diff = helper_compareFile(fp2, fp3, &line, &col);
+    diff = helper_compareFile(fp1, fp3, &line, &col);
 
-    fclose(fp2);
+    fclose(fp1);
     fclose(fp3);
 
-    // Testing if the files are the same
+    //Testing if the files are the same
     TEST_CHECK(diff == 0);
     TEST_MSG("Expected: %d", 0);
     TEST_MSG("Produced: %d", diff);
-} */
 
+
+    fp2 = fopen("Unit_test_neg.csv", "r");         // open the already written .csv file
+    fp4 = fopen("test_neg.csv", "r");              // open the test .csv file
+ 
+    // Call the helper_comparison of 2 .csv files
+    diff = helper_compareFile(fp2, fp4, &line, &col);
+
+    fclose(fp2);
+    fclose(fp4);
+
+    //Testing if the files are the same
+    TEST_CHECK(diff == 0);
+    TEST_MSG("Expected: %d", 0);
+    TEST_MSG("Produced: %d", diff);
+}
+
+void test_create_bow_array(void){
+
+    tree_entry *database_root = NULL;
+    char *json_specs;
+    int ht = 0;
+    int num_of_json  = 0; 
+    char *name_of_json;
+    char *full_json_path;
+    tree_entry *entry1 = NULL;
+    tree_entry *entry2 = NULL;
+    FILE *fp1;
+    FILE *fp2;
+    char *positive_relations = "test_pos.csv";
+    char *negative_relations = "test_neg.csv";
+    // Bow stuff
+    int** bow_array;
+
+    // First insertion of tree
+    num_of_json = 4233;
+    name_of_json = malloc(sizeof(char *));
+    strcpy(name_of_json, "buy.net//4233");
+    full_json_path = "../../dataset/camera_specs/2013_camera_specs/buy.net/4233.json";
+    json_specs = read_json(full_json_path);
+    database_root = insert(database_root, num_of_json, name_of_json, json_specs);
+
+    // Second insertion of tree
+    num_of_json = 4236;
+    name_of_json = malloc(sizeof(char *));
+    strcpy(name_of_json, "buy.net//4236");
+    full_json_path = "../../dataset/camera_specs/2013_camera_specs/buy.net/4236.json";
+    json_specs = read_json(full_json_path);
+    database_root = insert(database_root, num_of_json, name_of_json, json_specs);
+
+    // Third insertion of tree
+    num_of_json = 4239;
+    name_of_json = malloc(sizeof(char *));
+    strcpy(name_of_json, "buy.net//4239");
+    full_json_path = "../../dataset/camera_specs/2013_camera_specs/buy.net/4239.json";
+    json_specs = read_json(full_json_path);
+    database_root = insert(database_root, num_of_json, name_of_json, json_specs);
+
+    // Forth insertion of tree
+    num_of_json = 5449;
+    name_of_json = malloc(sizeof(char *));
+    strcpy(name_of_json, "www.alibaba.com//5449");
+    full_json_path = "../../dataset/camera_specs/2013_camera_specs/www.alibaba.com/5449.json";
+    json_specs = read_json(full_json_path);
+    database_root = insert(database_root, num_of_json, name_of_json, json_specs);
+
+    // Fifth insertion of tree
+    num_of_json = 5;
+    name_of_json = malloc(sizeof(char *));
+    strcpy(name_of_json, "www.cambuy.com.au//5");
+    full_json_path = "../../dataset/camera_specs/2013_camera_specs/www.cambuy.com.au/5.json";
+    json_specs = read_json(full_json_path);
+    database_root = insert(database_root, num_of_json, name_of_json, json_specs);
+
+    // Call add_positive_realtion to test the function
+    add_positive_relation(database_root,"buy.net//4239","www.alibaba.com//5449",1);
+    add_positive_relation(database_root,"buy.net//4233","buy.net//4236",1);
+    add_positive_relation(database_root,"buy.net//4236","www.alibaba.com//5449",0);
+    add_positive_relation(database_root,"buy.net//4236","buy.net//4233",1);
+    add_positive_relation(database_root,"www.cambuy.com.au//5","buy.net//4239",1);
+    add_positive_relation(database_root,"www.cambuy.com.au//5","buy.net//4233",0);
+
+    // Call add_negative_realtion to test the function
+    add_negative_relation(database_root,"buy.net//4239","www.alibaba.com//5449",1);
+    add_negative_relation(database_root,"buy.net//4233","buy.net//4236",1);
+    add_negative_relation(database_root,"buy.net//4236","www.alibaba.com//5449",0);
+    add_negative_relation(database_root,"buy.net//4236","buy.net//4233",1);
+    add_negative_relation(database_root,"www.cambuy.com.au//5","buy.net//4239",1);
+    add_negative_relation(database_root,"www.cambuy.com.au//5","buy.net//4233",0);
+
+    // Search the jsons in the tree
+    // entry1 = search(database_root, "buy.net//4236");
+    // entry2 = search(database_root, "www.alibaba.com//5449");
+
+    // // Check if the headbuckets of the entries are the same
+    // TEST_CHECK(entry1->headbucket == entry2->headbucket);
+    // TEST_MSG("Expected: %d", TRUE);
+    // TEST_MSG("Produced: %d", entry1->headbucket == entry2->headbucket);
+    fp1 = fopen(positive_relations, "r");
+    fp2 = fopen(negative_relations, "r");
+
+    bow_array = create_bow_array(database_root);
+    create_train_set_bow(bow_array, 1000, database_root, positive_relations, negative_relations);
+
+    fclose(fp1);
+    fclose(fp2);
+    
+    }
 
 // A list of the testing functions
 TEST_LIST = {
@@ -913,7 +1024,8 @@ TEST_LIST = {
     { "add_negative_relation", test_add_negative_relation },
     { "clique_tree_insert", test_clique_tree_insert},
     { "clique_tree_search", test_clique_tree_search},
-   /* { "print_all_relations", test_print_all_relations },*/
+    { "print_node_relations", test_print_node_relations },
+    { "create_bow_array", test_create_bow_array },
     { NULL, NULL }
 };
 
