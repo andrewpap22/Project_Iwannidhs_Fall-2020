@@ -1,16 +1,26 @@
-#include "include/Logistic_Regr.h"
+#include "include/Logistic_Regr.hpp"
 #include "./source/Logistic_Regr.cpp"
 
 #include <bits/stdc++.h>
 using namespace std;
 
-#define features 4
-#define learning_rate 0.003
-#define iterations 8000
+#define features 100
+#define learning_rate 0.001
+#define iterations 100
 
-int main(){
-	string train = "./data/train.txt";
-	string test = "./data/test.txt";
+int main(void)
+{
+	/*
+	 * Testing dataset we found online.
+	*/
+	// string train = "./data/train.txt";
+	// string test = "./data/test.txt";
+
+	/*
+	 * Our own dataset
+	*/
+	string train = "./data/Train_Set.csv";
+	string test = "./data/Test_Set.csv";
 
 	LogisticRegression lr(learning_rate, iterations);
 	Matrix training_exp = lr.readFromInputFile(train);
@@ -19,6 +29,8 @@ int main(){
 	double bias = 1;
 	Point4d weights = Point4d(features, 1);
 	Point5d optimal_weights = lr.gradientDesent(bias, weights, training_exp);
-	
+
 	lr.testAndPrint(optimal_weights, test_exp);
+
+	return 0;
 }

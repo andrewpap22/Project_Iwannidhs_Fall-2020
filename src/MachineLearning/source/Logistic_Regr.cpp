@@ -1,11 +1,11 @@
-#include "../include/Logistic_Regr.h"
+#include "../include/Logistic_Regr.hpp"
 
 #include <bits/stdc++.h>
 using namespace std;
 
 LogisticRegression::LogisticRegression(double learning_rate, int iterations)
 {
-  this->features = 4;
+  this->features = 100;
   this->iterations = iterations;
   this->learning_rate = learning_rate;
 }
@@ -141,7 +141,8 @@ void LogisticRegression::testAndPrint(Point5d optimal_weights, Matrix testing_ex
     if (predicted && !actual)
       fp++;
   }
-  cout << "True Positives:  " << tp << nl;
+
+  cout << nl << nl << "True Positives:  " << tp << nl;
   cout << "True Negatives:  " << tn << nl;
   cout << "False Positives: " << fp << nl;
   cout << "False Negatives: " << fn << nl;
@@ -149,9 +150,18 @@ void LogisticRegression::testAndPrint(Point5d optimal_weights, Matrix testing_ex
   cout << "Accuracy:  " << (double)(tp + tn) / (tp + fp + tn + fn) << nl;
   cout << "Precision: " << (double)(tp) / (tp + fp) << nl;
   cout << "Recall:    " << (double)(tp) / (tp + fn) << nl;
+  cout << "F1 Score:  " << (2 * (((double)(tp) / (tp + fp)) * ((double)(tp) / (tp + fn))) / (((double)(tp) / (tp + fp)) + ((double)(tp) / (tp + fn)))) << nl;
   cout << nl << nl << "Confusion Matrix:" << nl;
   cout << "\t\t"
        << "Predicted: 0\tPredicted: 1" << nl;
   cout << "Actual: 0\t" << tn << "\t\t" << fp << nl;
   cout << "Actual: 1\t" << fn << "\t\t" << tp << nl;
+
+  /*
+   * The F1 Score is the 2*((precision*recall)/(precision+recall)) 
+   * What is a good f1 score?
+   * That is, a good F1 score means that you have low false positives and low false negatives, so you're correctly
+   * identifying real threats and you are not disturbed by false alarms. An F1 score is considered perfect when it's 1,
+   * while the model is a total failure when it's 0 .
+   */
 }
