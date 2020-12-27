@@ -162,7 +162,7 @@ int json_key = 0;
 int word_key = 0;
 int num_of_unique_words = 0;
 int num_of_unique_usefull_words = 0;
-
+float *idf_array;
 
 //Functions 
 
@@ -415,6 +415,40 @@ void create_train_set_bow(int** data_array, int num_of_words, tree_entry* databa
 	free(json1);
 	free(json2);
 }
+int* sort_idf_array(){
+	float smallest_value = 100.0;
+	int index = 0;
+	int *indexes = malloc(WORDS_FOR_DATASET*sizeof(int));
+	for (int i = 0; i < WORDS_FOR_DATASET; i++){
+		for (int j = 0; j < num_of_unique_usefull_words; j++){
+			if (smallest_value > idf_array[j]){
+				index = j;
+				smallest_value = idf_array[j];
+			}
+		}
+		indexes[i] = index;
+		smallest_value = 100.0;
+		idf_array[index]= 100.0;
+	}
+	return indexes;
+}
+float ** improve_tf_idf(float** tf_idf_array){
+	int* indexes = sort_idf_array();
+	float** improved_tf_idf = malloc(sizeof(float*)*WORDS_FOR_DATASET);
+	for (int i = 0; i < WORDS_FOR_DATASET; i++){
+		improved_tf_idf[i] = tf_idf_array[indexes[i]];
+	}
+	return improved_tf_idf;
+}
+
+int ** improve_bow(int** bow_array){
+	int* indexes = sort_idf_array();
+	int** improved_bow = malloc(sizeof(int*)*WORDS_FOR_DATASET);
+	for (int i = 0; i < WORDS_FOR_DATASET; i++){
+		improved_bow[i] = bow_array[indexes[i]];
+	}
+	return improved_bow;
+}
 
 float ** create_tf_idf(int** bow_array){
 	int word_count = num_of_unique_usefull_words;
@@ -424,6 +458,10 @@ float ** create_tf_idf(int** bow_array){
 
 	int json_total_words[json_count];	//num of words for every json
 	int jsons_including_word_array[word_count];	//num of jsons that every word appears in atleast once
+
+	//the idf_array will be used to store the most important word columns for the final array (bow or tf_idf)
+	idf_array = malloc(sizeof(int)*num_of_unique_usefull_words);
+	
 
 	for (int cur_json = 0; cur_json < json_count; cur_json++){
 		json_total_words[cur_json] = 0;
@@ -461,6 +499,7 @@ float ** create_tf_idf(int** bow_array){
 	//fill tf_idf_array
 	for (int cur_word = 0; cur_word < word_count; cur_word++){
 		idf = log10f(((float)(json_count))/((float)(jsons_including_word_array[cur_word])));
+		idf_array[cur_word] = idf;
 		// printf("idf:                        %lf\n\n",idf);
 		for (int cur_json = 0; cur_json < json_count; cur_json++){
 			if (bow_array[cur_word][cur_json] == 0){
