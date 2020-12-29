@@ -992,7 +992,7 @@ void test_create_bow_tree(void){
     bow_array = create_bow_array(database_root);
     num_of_test = bow_array[446][4];
     
-    //Testing if the files are the same
+    //Testing if the function in Unit testing have the same results with the original
     TEST_CHECK(num_of_test == 9);
     TEST_MSG("Expected: %d", TRUE);
     TEST_MSG("Produced: %d", num_of_test);
@@ -1013,6 +1013,13 @@ void test_create_tf_idf(void){
     // Bow stuff
     int** bow_array;
     float** tf_idf_array;
+
+    int json_total_words[5];   //num of words for every json 
+    int jsons_including_word_array[449]; //num of jsons that every word appears in atleast once   
+    int cur_word = 0;
+    int cur_json = 0;
+    float tf;
+    float idf;
 
     // First insertion of tree
     num_of_json = 4233;
@@ -1072,13 +1079,36 @@ void test_create_tf_idf(void){
 
     bow_array = create_bow_array(database_root);
     tf_idf_array = create_tf_idf(bow_array);
-    
-    num_of_test = tf_idf_array[75][0];
-    
-    //Testing if the files are the same
-    TEST_CHECK(tf_idf_array[75][0] == 0.003892);
+
+    // Process the vars=val into function of tf_idf
+    for (int cur_json = 0; cur_json < 5; cur_json++){
+        json_total_words[cur_json] = 0;
+    }   
+    //fill the arrays above^^
+    for (cur_word = 0; cur_word < 449; cur_word++){
+        jsons_including_word_array[cur_word] = 0;
+        for (cur_json = 0; cur_json < 5; cur_json++){
+            if (bow_array[cur_word][cur_json]>0){
+                jsons_including_word_array[cur_word] += 1 ;
+                // printf("%d\n",bow_array[cur_word][cur_json]);
+                json_total_words[cur_json] += bow_array[cur_word][cur_json];
+                // printf("%d\n\n",json_total_words[cur_json]);
+            }
+        }
+    }
+    idf = log10f(((float)(5))/((float)(jsons_including_word_array[446])));
+    if (bow_array[446][0] == 0){
+        tf = 0;
+    }
+    else 
+        tf = (float)bow_array[446][0]/(float)json_total_words[0];
+
+    num_of_test = tf*idf;
+
+    //Testing if the function in Unit testing have the same results with the original
+    TEST_CHECK(num_of_test == tf_idf_array[446][0]);
     TEST_MSG("Expected: %d", TRUE);
-    TEST_MSG("Produced: %lf", tf_idf_array[75][0]);
+    TEST_MSG("Produced: %lf", num_of_test);
     
     }
 
