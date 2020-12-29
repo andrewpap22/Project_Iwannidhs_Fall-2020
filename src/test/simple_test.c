@@ -919,7 +919,171 @@ void test_print_node_relations(void){
     TEST_MSG("Produced: %d", diff);
 }
 
-void test_create_bow_array(void){
+void test_create_bow_tree(void){
+
+    tree_entry *database_root = NULL;
+    char *json_specs;
+    int ht = 0;
+    int num_of_json  = 0; 
+    char *name_of_json;
+    char *full_json_path;
+    tree_entry *entry1 = NULL;
+    tree_entry *entry2 = NULL;
+    int num_of_test;
+    // Bow stuff
+    int** bow_array;
+
+    // First insertion of tree
+    num_of_json = 4233;
+    name_of_json = malloc(sizeof(char *));
+    strcpy(name_of_json, "buy.net//4233");
+    full_json_path = "../../dataset/camera_specs/2013_camera_specs/buy.net/4233.json";
+    json_specs = read_json(full_json_path);
+    database_root = insert(database_root, num_of_json, name_of_json, json_specs);
+
+    // Second insertion of tree
+    num_of_json = 4236;
+    name_of_json = malloc(sizeof(char *));
+    strcpy(name_of_json, "buy.net//4236");
+    full_json_path = "../../dataset/camera_specs/2013_camera_specs/buy.net/4236.json";
+    json_specs = read_json(full_json_path);
+    database_root = insert(database_root, num_of_json, name_of_json, json_specs);
+
+    // Third insertion of tree
+    num_of_json = 4239;
+    name_of_json = malloc(sizeof(char *));
+    strcpy(name_of_json, "buy.net//4239");
+    full_json_path = "../../dataset/camera_specs/2013_camera_specs/buy.net/4239.json";
+    json_specs = read_json(full_json_path);
+    database_root = insert(database_root, num_of_json, name_of_json, json_specs);
+
+    // Forth insertion of tree
+    num_of_json = 5449;
+    name_of_json = malloc(sizeof(char *));
+    strcpy(name_of_json, "www.alibaba.com//5449");
+    full_json_path = "../../dataset/camera_specs/2013_camera_specs/www.alibaba.com/5449.json";
+    json_specs = read_json(full_json_path);
+    database_root = insert(database_root, num_of_json, name_of_json, json_specs);
+
+    // Fifth insertion of tree
+    num_of_json = 5;
+    name_of_json = malloc(sizeof(char *));
+    strcpy(name_of_json, "www.cambuy.com.au//5");
+    full_json_path = "../../dataset/camera_specs/2013_camera_specs/www.cambuy.com.au/5.json";
+    json_specs = read_json(full_json_path);
+    database_root = insert(database_root, num_of_json, name_of_json, json_specs);
+
+    // Call add_positive_realtion to test the function
+    add_positive_relation(database_root,"buy.net//4239","www.alibaba.com//5449",1);
+    add_positive_relation(database_root,"buy.net//4233","buy.net//4236",1);
+    add_positive_relation(database_root,"buy.net//4236","www.alibaba.com//5449",0);
+    add_positive_relation(database_root,"buy.net//4236","buy.net//4233",1);
+    add_positive_relation(database_root,"www.cambuy.com.au//5","buy.net//4239",1);
+    add_positive_relation(database_root,"www.cambuy.com.au//5","buy.net//4233",0);
+
+    // Call add_negative_realtion to test the function
+    add_negative_relation(database_root,"buy.net//4239","www.alibaba.com//5449",1);
+    add_negative_relation(database_root,"buy.net//4233","buy.net//4236",1);
+    add_negative_relation(database_root,"buy.net//4236","www.alibaba.com//5449",0);
+    add_negative_relation(database_root,"buy.net//4236","buy.net//4233",1);
+    add_negative_relation(database_root,"www.cambuy.com.au//5","buy.net//4239",1);
+    add_negative_relation(database_root,"www.cambuy.com.au//5","buy.net//4233",0);
+
+    bow_array = create_bow_array(database_root);
+    num_of_test = bow_array[446][4];
+    
+    //Testing if the files are the same
+    TEST_CHECK(num_of_test == 9);
+    TEST_MSG("Expected: %d", TRUE);
+    TEST_MSG("Produced: %d", num_of_test);
+    
+    }
+
+void test_create_tf_idf(void){
+
+    tree_entry *database_root = NULL;
+    char *json_specs;
+    int ht = 0;
+    int num_of_json  = 0; 
+    char *name_of_json;
+    char *full_json_path;
+    tree_entry *entry1 = NULL;
+    tree_entry *entry2 = NULL;
+    float num_of_test;
+    // Bow stuff
+    int** bow_array;
+    float** tf_idf_array;
+
+    // First insertion of tree
+    num_of_json = 4233;
+    name_of_json = malloc(sizeof(char *));
+    strcpy(name_of_json, "buy.net//4233");
+    full_json_path = "../../dataset/camera_specs/2013_camera_specs/buy.net/4233.json";
+    json_specs = read_json(full_json_path);
+    database_root = insert(database_root, num_of_json, name_of_json, json_specs);
+
+    // Second insertion of tree
+    num_of_json = 4236;
+    name_of_json = malloc(sizeof(char *));
+    strcpy(name_of_json, "buy.net//4236");
+    full_json_path = "../../dataset/camera_specs/2013_camera_specs/buy.net/4236.json";
+    json_specs = read_json(full_json_path);
+    database_root = insert(database_root, num_of_json, name_of_json, json_specs);
+
+    // Third insertion of tree
+    num_of_json = 4239;
+    name_of_json = malloc(sizeof(char *));
+    strcpy(name_of_json, "buy.net//4239");
+    full_json_path = "../../dataset/camera_specs/2013_camera_specs/buy.net/4239.json";
+    json_specs = read_json(full_json_path);
+    database_root = insert(database_root, num_of_json, name_of_json, json_specs);
+
+    // Forth insertion of tree
+    num_of_json = 5449;
+    name_of_json = malloc(sizeof(char *));
+    strcpy(name_of_json, "www.alibaba.com//5449");
+    full_json_path = "../../dataset/camera_specs/2013_camera_specs/www.alibaba.com/5449.json";
+    json_specs = read_json(full_json_path);
+    database_root = insert(database_root, num_of_json, name_of_json, json_specs);
+
+    // Fifth insertion of tree
+    num_of_json = 5;
+    name_of_json = malloc(sizeof(char *));
+    strcpy(name_of_json, "www.cambuy.com.au//5");
+    full_json_path = "../../dataset/camera_specs/2013_camera_specs/www.cambuy.com.au/5.json";
+    json_specs = read_json(full_json_path);
+    database_root = insert(database_root, num_of_json, name_of_json, json_specs);
+
+    // Call add_positive_realtion to test the function
+    add_positive_relation(database_root,"buy.net//4239","www.alibaba.com//5449",1);
+    add_positive_relation(database_root,"buy.net//4233","buy.net//4236",1);
+    add_positive_relation(database_root,"buy.net//4236","www.alibaba.com//5449",0);
+    add_positive_relation(database_root,"buy.net//4236","buy.net//4233",1);
+    add_positive_relation(database_root,"www.cambuy.com.au//5","buy.net//4239",1);
+    add_positive_relation(database_root,"www.cambuy.com.au//5","buy.net//4233",0);
+
+    // Call add_negative_realtion to test the function
+    add_negative_relation(database_root,"buy.net//4239","www.alibaba.com//5449",1);
+    add_negative_relation(database_root,"buy.net//4233","buy.net//4236",1);
+    add_negative_relation(database_root,"buy.net//4236","www.alibaba.com//5449",0);
+    add_negative_relation(database_root,"buy.net//4236","buy.net//4233",1);
+    add_negative_relation(database_root,"www.cambuy.com.au//5","buy.net//4239",1);
+    add_negative_relation(database_root,"www.cambuy.com.au//5","buy.net//4233",0);
+
+    bow_array = create_bow_array(database_root);
+    tf_idf_array = create_tf_idf(bow_array);
+    
+    num_of_test = tf_idf_array[75][0];
+    
+    //Testing if the files are the same
+    TEST_CHECK(tf_idf_array[75][0] == 0.003892);
+    TEST_MSG("Expected: %d", TRUE);
+    TEST_MSG("Produced: %lf", tf_idf_array[75][0]);
+    
+    }
+
+
+void test_create_train_set_bow(void){
 
     tree_entry *database_root = NULL;
     char *json_specs;
@@ -931,6 +1095,8 @@ void test_create_bow_array(void){
     tree_entry *entry2 = NULL;
     FILE *fp1;
     FILE *fp2;
+    int diff;
+    int line, col;
     char *positive_relations = "test_pos.csv";
     char *negative_relations = "test_neg.csv";
     // Bow stuff
@@ -992,22 +1158,129 @@ void test_create_bow_array(void){
     add_negative_relation(database_root,"www.cambuy.com.au//5","buy.net//4239",1);
     add_negative_relation(database_root,"www.cambuy.com.au//5","buy.net//4233",0);
 
-    // Search the jsons in the tree
-    // entry1 = search(database_root, "buy.net//4236");
-    // entry2 = search(database_root, "www.alibaba.com//5449");
-
-    // // Check if the headbuckets of the entries are the same
-    // TEST_CHECK(entry1->headbucket == entry2->headbucket);
-    // TEST_MSG("Expected: %d", TRUE);
-    // TEST_MSG("Produced: %d", entry1->headbucket == entry2->headbucket);
     fp1 = fopen(positive_relations, "r");
     fp2 = fopen(negative_relations, "r");
 
     bow_array = create_bow_array(database_root);
-    create_train_set_bow(bow_array, 1000, database_root, positive_relations, negative_relations);
+    create_train_set_bow(bow_array, NUMOFWORDS, database_root, positive_relations, negative_relations);
 
     fclose(fp1);
     fclose(fp2);
+
+    fp1 = fopen("Train_Set.csv", "r");
+    fp2 = fopen("test_Train_Set_b.csv", "r");
+
+    diff = helper_compareFile(fp1, fp2, &line, &col);
+
+    fclose(fp1);
+    fclose(fp2);
+
+    //Testing if the files are the same
+    TEST_CHECK(diff == 0);
+    TEST_MSG("Expected: %d", 0);
+    TEST_MSG("Produced: %d", diff);
+    
+    }
+
+void test_create_train_set_tfidf(void){
+
+    tree_entry *database_root = NULL;
+    char *json_specs;
+    int ht = 0;
+    int num_of_json  = 0; 
+    char *name_of_json;
+    char *full_json_path;
+    tree_entry *entry1 = NULL;
+    tree_entry *entry2 = NULL;
+    FILE *fp1;
+    FILE *fp2;
+    int diff;
+    int line, col;
+    char *positive_relations = "test_pos.csv";
+    char *negative_relations = "test_neg.csv";
+    // Bow stuff
+    int** bow_array;
+    float** tf_idf_array;
+
+    // First insertion of tree
+    num_of_json = 4233;
+    name_of_json = malloc(sizeof(char *));
+    strcpy(name_of_json, "buy.net//4233");
+    full_json_path = "../../dataset/camera_specs/2013_camera_specs/buy.net/4233.json";
+    json_specs = read_json(full_json_path);
+    database_root = insert(database_root, num_of_json, name_of_json, json_specs);
+
+    // Second insertion of tree
+    num_of_json = 4236;
+    name_of_json = malloc(sizeof(char *));
+    strcpy(name_of_json, "buy.net//4236");
+    full_json_path = "../../dataset/camera_specs/2013_camera_specs/buy.net/4236.json";
+    json_specs = read_json(full_json_path);
+    database_root = insert(database_root, num_of_json, name_of_json, json_specs);
+
+    // Third insertion of tree
+    num_of_json = 4239;
+    name_of_json = malloc(sizeof(char *));
+    strcpy(name_of_json, "buy.net//4239");
+    full_json_path = "../../dataset/camera_specs/2013_camera_specs/buy.net/4239.json";
+    json_specs = read_json(full_json_path);
+    database_root = insert(database_root, num_of_json, name_of_json, json_specs);
+
+    // Forth insertion of tree
+    num_of_json = 5449;
+    name_of_json = malloc(sizeof(char *));
+    strcpy(name_of_json, "www.alibaba.com//5449");
+    full_json_path = "../../dataset/camera_specs/2013_camera_specs/www.alibaba.com/5449.json";
+    json_specs = read_json(full_json_path);
+    database_root = insert(database_root, num_of_json, name_of_json, json_specs);
+
+    // Fifth insertion of tree
+    num_of_json = 5;
+    name_of_json = malloc(sizeof(char *));
+    strcpy(name_of_json, "www.cambuy.com.au//5");
+    full_json_path = "../../dataset/camera_specs/2013_camera_specs/www.cambuy.com.au/5.json";
+    json_specs = read_json(full_json_path);
+    database_root = insert(database_root, num_of_json, name_of_json, json_specs);
+
+    // Call add_positive_realtion to test the function
+    add_positive_relation(database_root,"buy.net//4239","www.alibaba.com//5449",1);
+    add_positive_relation(database_root,"buy.net//4233","buy.net//4236",1);
+    add_positive_relation(database_root,"buy.net//4236","www.alibaba.com//5449",0);
+    add_positive_relation(database_root,"buy.net//4236","buy.net//4233",1);
+    add_positive_relation(database_root,"www.cambuy.com.au//5","buy.net//4239",1);
+    add_positive_relation(database_root,"www.cambuy.com.au//5","buy.net//4233",0);
+
+    // Call add_negative_realtion to test the function
+    add_negative_relation(database_root,"buy.net//4239","www.alibaba.com//5449",1);
+    add_negative_relation(database_root,"buy.net//4233","buy.net//4236",1);
+    add_negative_relation(database_root,"buy.net//4236","www.alibaba.com//5449",0);
+    add_negative_relation(database_root,"buy.net//4236","buy.net//4233",1);
+    add_negative_relation(database_root,"www.cambuy.com.au//5","buy.net//4239",1);
+    add_negative_relation(database_root,"www.cambuy.com.au//5","buy.net//4233",0);
+
+
+    fp1 = fopen(positive_relations, "r");
+    fp2 = fopen(negative_relations, "r");
+
+    bow_array = create_bow_array(database_root);
+    tf_idf_array = create_tf_idf(bow_array);
+    create_train_set_tfidf(tf_idf_array, NUMOFWORDS, database_root, positive_relations, negative_relations);
+    
+    fclose(fp1);
+    fclose(fp2);
+
+    fp1 = fopen("Train_Set.csv", "r");
+    fp2 = fopen("test_Train_Set_f.csv", "r");
+
+    diff = helper_compareFile(fp1, fp2, &line, &col);
+
+    fclose(fp1);
+    fclose(fp2);
+
+    //Testing if the files are the same
+    TEST_CHECK(diff == 0);
+    TEST_MSG("Expected: %d", 0);
+    TEST_MSG("Produced: %d", diff);
     
     }
 
@@ -1025,7 +1298,10 @@ TEST_LIST = {
     { "clique_tree_insert", test_clique_tree_insert},
     { "clique_tree_search", test_clique_tree_search},
     { "print_node_relations", test_print_node_relations },
-    { "create_bow_array", test_create_bow_array },
+    { "create_bow_tree", test_create_bow_tree },  
+    { "create_tf_idf", test_create_tf_idf },
+    { "create_train_set_bow", test_create_train_set_bow },
+    { "create_train_set_tfidf", test_create_train_set_tfidf },
     { NULL, NULL }
 };
 

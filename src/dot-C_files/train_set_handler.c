@@ -111,6 +111,7 @@ char stopwords[NUMOFSTOPWORDS][15] = {
 	"some",
 	"such",
 	"no",
+	"yes",
 	"nor",
 	"not",
 	"only",

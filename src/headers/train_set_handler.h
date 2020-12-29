@@ -16,7 +16,7 @@
 #include <math.h>
 #include "../headers/structs.h"
 
-#define NUMOFSTOPWORDS 154
+#define NUMOFSTOPWORDS 155
 #define NUMOFENTRIES 29787
 #define MAXWORDSIZE 7
 #define WORDS_FOR_DATASET 100
