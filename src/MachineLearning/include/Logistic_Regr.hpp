@@ -33,10 +33,16 @@ private:
   double learning_rate;
 
 public:
+  LogisticRegression(){} // default constructor for the ml_test unit testing.
   LogisticRegression(double, int);
   Matrix readFromInputFile(string);
   Point5d gradientDesent(double, Point4d, Matrix);
   void testAndPrint(Point5d, Matrix);
+
+  /*getters for the constructor unit testing*/
+  int GetIterations() {return iterations;}
+  double GetLearningRate() {return learning_rate;}
+  int GetFeatures() {return features;}
 };
 
 #endif /* LOGISTIC_REGR_H */

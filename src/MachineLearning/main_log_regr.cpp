@@ -6,7 +6,7 @@ using namespace std;
 
 #define features 100
 #define learning_rate 0.001
-#define iterations 100
+#define iterations 111
 
 int main(void)
 {
@@ -19,8 +19,14 @@ int main(void)
 	/*
 	 * Our own dataset
 	*/
-	string train = "./data/Train_Set.csv";
-	string test = "./data/Test_Set.csv";
+	// string train = "./data/Train_Set.csv";
+	// string test = "./data/Test_Set.csv";
+
+	/*
+	 * Our own (improved) dataset
+	*/
+	string train = "./data/Train_Set_Improved.csv";
+	string test = "./data/Test_Set_Improved.csv";
 
 	LogisticRegression lr(learning_rate, iterations);
 	Matrix training_exp = lr.readFromInputFile(train);
