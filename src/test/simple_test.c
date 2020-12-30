@@ -7,10 +7,6 @@
 #include "../headers/includes_for_parser.h"
 #include "../headers/train_set_handler.h"
 
-
-#define NUMOFENTRIES 29787
-#define NUMOFWORDS 79782
-
 // Function only for help the Unit Testing
 int helper_compareFile(FILE * fPtr1, FILE * fPtr2, int * line, int * col)
 {
@@ -1192,7 +1188,7 @@ void test_create_train_set_bow(void){
     fp2 = fopen(negative_relations, "r");
 
     bow_array = create_bow_array(database_root);
-    create_train_set_bow(bow_array, NUMOFWORDS, database_root, positive_relations, negative_relations);
+    create_train_set_bow(bow_array, database_root, positive_relations, negative_relations);
 
     fclose(fp1);
     fclose(fp2);
@@ -1294,7 +1290,7 @@ void test_create_train_set_tfidf(void){
 
     bow_array = create_bow_array(database_root);
     tf_idf_array = create_tf_idf(bow_array);
-    create_train_set_tfidf(tf_idf_array, NUMOFWORDS, database_root, positive_relations, negative_relations);
+    create_train_set_tfidf(tf_idf_array, database_root, positive_relations, negative_relations);
     
     fclose(fp1);
     fclose(fp2);
