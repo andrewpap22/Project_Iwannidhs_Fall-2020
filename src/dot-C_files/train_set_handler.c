@@ -280,7 +280,7 @@ void create_train_set_tfidf(float** data_array, tree_entry* database_root, char*
 //.. and 1/5 to train.
     while ((read = getline(&line, &len, fp)) != -1) {
 	// for (int j = 0; j <400; j++){
-		read = getline(&line, &len, fp);
+		//read = getline(&line, &len, fp);
 		part_of_string = strtok(line, ", "); 
 		strcpy(json1, part_of_string);
 		part_of_string = strtok(NULL, ", "); 
