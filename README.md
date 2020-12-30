@@ -136,7 +136,7 @@ void free_node(tree_entry *T);
 char* read_json(char* json_filename);
 ```
 
-## Unit Testing
+## Unit Testing Part_1 & Part_2
 
 Following the path: <br>
 **src** ~> **test** ~> *simple_test.c* <br>
@@ -156,7 +156,7 @@ void test_BF(void);
 ```C++
 void test_read_json(void);
 ```
-- responsible for testing the function read_json. <br>
+- responsible for testing the function updated-improved read_json. <br>
 ```C++
 void test_insert(void);
 ```
@@ -170,13 +170,41 @@ void test_search(void);
 ```
 - responsible for testing the function search. <br>
 ```C++
-void test_add_relation(void);
+void test_clique_tree_search(void);
 ```
-- responsible for testing the function add_relation. <br>
+- responsible for testing the function clique_tree_search. <br>
 ```C++
-void test_print_all_relations(tree_entry *,FILE*);
+void test_clique_tree_insert(void);
 ```
-- responsible for testing the function print_all_relations. <br><br>
+- responsible for testing the function clique_tree_insert. <br>
+```C++
+void test_add_positive_relation(void);
+```
+- responsible for testing the function add_positive_relation. <br>
+```C++
+void test_add_negative_relation(void);
+```
+- responsible for testing the function add_negative_relation. <br>
+```C++
+void test_create_bow_tree(void);
+```
+- responsible for testing the function create_bow_tree. <br>
+```C++
+void test_create_tf_idf(void);
+```
+- responsible for testing the function create_tf_idf. <br>
+```C++
+void test_create_train_set_bow(void);
+```
+- responsible for testing the function create_train_set_bow. <br>
+```C++
+void test_create_train_set_tfidf(void);
+```
+- responsible for testing the function create_train_set_tfidf. <br>
+```C++
+void test_print_node_relations(void);
+```
+- responsible for testing the function print_all_positive/negative_relations. <br><br>
 
 
 - Helper Function to compare 2 .csv files.
@@ -187,7 +215,7 @@ int helper_compareFile(FILE * fPtr1, FILE * fPtr2, int * line, int * col);
 
 Run the Unit Testing: <br>
 How to compile the Unit tests <br>
-- gcc simple_test.c ../dot-C_files/structs.c ../dot-C_files/W_handler.c -o simple_test -ljson-c <br>
+- gcc simple_test.c ../dot-C_files/structs.c ../dot-C_files/W_handler.c ../dot-C_files/json_parser.c ../dot-C_files/train_set_handler.c -o simple_test -ljson-c -lm <br>
 How to run the tests <br>
 - We can run all tests in the suite 
   - *./simple_tests*
