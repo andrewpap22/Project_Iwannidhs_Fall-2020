@@ -51,11 +51,11 @@ $ make
 
 ### Execution:
 ```
-$ ./project1 ../dataset/sigmod_large_labelled_dataset.csv
+$ ./project2 ../dataset/sigmod_large_labelled_dataset.csv
 
   or
 
-$ ./project1 ../dataset/sigmod_medium_labelled_dataset.csv  
+$ ./project2 ../dataset/sigmod_medium_labelled_dataset.csv  
 ```
 
 **(Execution time on large dataset = 3sec)**
@@ -234,6 +234,55 @@ How to run the tests <br>
 
 From here and on we'll continue the documentation of the `part2` of the project.
 
+## Negative Relations
+
+For the negative relations, a tree is added to the headbucket of every clique. Every node of that tree has a pointer to other cliques(to their headbucket specifically). These pointers are effectively connecting different cliques, and are created during the reading of the W file.
+
+## Parsing
+
+For json parsing we first read every json and put all its contents in a string just like project1. Then parse it line by line and only keep the words by removing the labels and
+symbols surrounding the lines.
+
+## Creating BoW-IDF
+
+### Dictionary
+
+The dictionary is stored in a AVL tree. Every node of the tree holds the string of the word, an array of wordcounts(which represents the column of the BoW representation for that word) and an integer key of that word(so that we can use arrays later). The dictionary tree is created by reading every word of every json, preprocessing it and updating/creating tree nodes based on it.
+
+### Preprocessing
+
+The preprocessing is composed of a series of functions that alter the word, by:
+- lowercasing it
+- removing symbols from it, for instance "camera)," becomes "camera" (not every symbol though, because for example we don't want "3.5" to become "35" as it changes the word meaning)
+- ignoring really big words (uses MAXWORDSIZE = 10 in train_handler.h file, changeable)
+- the stopwords are removed after the BoW tree is created
+
+### Creating BoW and TF_IDF arrays
+The BoW array is created by recursively iterating the BoW Dictionary, and combining the columns of non stopwords. The TF_IDF array is created by first iterating the BoW array and getting the necessary extra data (number of words in a json for tf, and number of jsons that contain a specific word atleast once for idf). The rest data needed for tf and idf(bow entries and number of jsons) we already have. Then the TF_IDF array is allocated and filled based on the data above.
+
+## Improving Bow and TF_IDF
+
+Because the different words are way to many even with preprocessing (about 30000) we need to select the most "important" ones, so that the train and test sets aren't huge, and we avoid uneccessary noise.
+
+This is done by saving the idf value of every word column to an array (during the TF_IDF creation), and the only using the ones with the lowest value(most importance). This sorting functions returns the indexes of the best word columns, which are used to create the improved arrays. 
+
+## Creating Machine learing data
+
+The dataset is created based on the positive_relations.csv, the negative_relations.csv and the improved BoW or TF_IDF (based on what the user asks for). Every relation is translated to the subtraction of the two vectors of its jsons, creating a vector for ML. These vectors are split to Train_Set.csv and Test_Set.csv (4/5 to train and 1/5 to test) to be used for Machine Learning.
+
+### Compilation: 
+```
+$ make
+``` 
+
+### Execution:
+```
+$ ./project2 ../dataset/sigmod_large_labelled_dataset.csv
+
+  or
+
+$ ./project2 ../dataset/sigmod_medium_labelled_dataset.csv  
+```
 ## Machine Learning
 
 ### Logistic Regression 
