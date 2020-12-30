@@ -277,11 +277,11 @@ $ make
 
 ### Execution:
 ```
-$ ./project2 ../dataset/sigmod_large_labelled_dataset.csv
+$ ./project2 bow
 
   or
 
-$ ./project2 ../dataset/sigmod_medium_labelled_dataset.csv  
+$ ./project2 tf_idf  
 ```
 ## Machine Learning
 
