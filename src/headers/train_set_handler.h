@@ -19,7 +19,7 @@
 #define NUMOFSTOPWORDS 155
 #define NUMOFENTRIES 29787
 #define MAXWORDSIZE 7
-#define WORDS_FOR_DATASET 50
+#define WORDS_FOR_DATASET 200
 // #define WORD_BUFFER 50
 
 typedef struct bow_tree_entry{
