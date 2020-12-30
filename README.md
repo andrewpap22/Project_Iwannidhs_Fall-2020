@@ -51,11 +51,11 @@ $ make
 
 ### Execution:
 ```
-$ ./project1 ../dataset/sigmod_large_labelled_dataset.csv
+$ ./project2 ../dataset/sigmod_large_labelled_dataset.csv
 
   or
 
-$ ./project1 ../dataset/sigmod_medium_labelled_dataset.csv  
+$ ./project2 ../dataset/sigmod_medium_labelled_dataset.csv  
 ```
 
 **(Execution time on large dataset = 3sec)**
@@ -136,7 +136,7 @@ void free_node(tree_entry *T);
 char* read_json(char* json_filename);
 ```
 
-## Unit Testing
+## Unit Testing Part_1 & Part_2
 
 Following the path: <br>
 **src** ~> **test** ~> *simple_test.c* <br>
@@ -156,7 +156,7 @@ void test_BF(void);
 ```C++
 void test_read_json(void);
 ```
-- responsible for testing the function read_json. <br>
+- responsible for testing the function updated-improved read_json. <br>
 ```C++
 void test_insert(void);
 ```
@@ -170,13 +170,41 @@ void test_search(void);
 ```
 - responsible for testing the function search. <br>
 ```C++
-void test_add_relation(void);
+void test_clique_tree_search(void);
 ```
-- responsible for testing the function add_relation. <br>
+- responsible for testing the function clique_tree_search. <br>
 ```C++
-void test_print_all_relations(tree_entry *,FILE*);
+void test_clique_tree_insert(void);
 ```
-- responsible for testing the function print_all_relations. <br><br>
+- responsible for testing the function clique_tree_insert. <br>
+```C++
+void test_add_positive_relation(void);
+```
+- responsible for testing the function add_positive_relation. <br>
+```C++
+void test_add_negative_relation(void);
+```
+- responsible for testing the function add_negative_relation. <br>
+```C++
+void test_create_bow_tree(void);
+```
+- responsible for testing the function create_bow_tree. <br>
+```C++
+void test_create_tf_idf(void);
+```
+- responsible for testing the function create_tf_idf. <br>
+```C++
+void test_create_train_set_bow(void);
+```
+- responsible for testing the function create_train_set_bow. <br>
+```C++
+void test_create_train_set_tfidf(void);
+```
+- responsible for testing the function create_train_set_tfidf. <br>
+```C++
+void test_print_node_relations(void);
+```
+- responsible for testing the function print_all_positive/negative_relations. <br><br>
 
 
 - Helper Function to compare 2 .csv files.
@@ -187,7 +215,7 @@ int helper_compareFile(FILE * fPtr1, FILE * fPtr2, int * line, int * col);
 
 Run the Unit Testing: <br>
 How to compile the Unit tests <br>
-- gcc simple_test.c ../dot-C_files/structs.c ../dot-C_files/W_handler.c -o simple_test -ljson-c <br>
+- gcc simple_test.c ../dot-C_files/structs.c ../dot-C_files/W_handler.c ../dot-C_files/json_parser.c ../dot-C_files/train_set_handler.c -o simple_test -ljson-c -lm <br>
 How to run the tests <br>
 - We can run all tests in the suite 
   - *./simple_tests*
@@ -198,8 +226,103 @@ How to run the tests <br>
 <hr>
 
 - *The code is thoroughly commented wherever needed for it's better comprehension.*
-- **Thank you!** 😄 
+- **Thank you!** 😄
+
 <hr>
+
+# `Part 2` of the Project
+
+From here and on we'll continue the documentation of the `part2` of the project.
+
+## Negative Relations
+
+For the negative relations, a tree is added to the headbucket of every clique. Every node of that tree has a pointer to other cliques(to their headbucket specifically). These pointers are effectively connecting different cliques, and are created during the reading of the W file.
+
+## Parsing
+
+For json parsing we first read every json and put all its contents in a string just like project1. Then parse it line by line and only keep the words by removing the labels and
+symbols surrounding the lines.
+
+## Creating BoW-IDF
+
+### Dictionary
+
+The dictionary is stored in a AVL tree. Every node of the tree holds the string of the word, an array of wordcounts(which represents the column of the BoW representation for that word) and an integer key of that word(so that we can use arrays later). The dictionary tree is created by reading every word of every json, preprocessing it and updating/creating tree nodes based on it.
+
+### Preprocessing
+
+The preprocessing is composed of a series of functions that alter the word, by:
+- lowercasing it
+- removing symbols from it, for instance "camera)," becomes "camera" (not every symbol though, because for example we don't want "3.5" to become "35" as it changes the word meaning)
+- ignoring really big words (uses MAXWORDSIZE = 10 in train_handler.h file, changeable)
+- the stopwords are removed after the BoW tree is created
+
+### Creating BoW and TF_IDF arrays
+The BoW array is created by recursively iterating the BoW Dictionary, and combining the columns of non stopwords. The TF_IDF array is created by first iterating the BoW array and getting the necessary extra data (number of words in a json for tf, and number of jsons that contain a specific word atleast once for idf). The rest data needed for tf and idf(bow entries and number of jsons) we already have. Then the TF_IDF array is allocated and filled based on the data above.
+
+## Improving Bow and TF_IDF
+
+Because the different words are way to many even with preprocessing (about 30000) we need to select the most "important" ones, so that the train and test sets aren't huge, and we avoid uneccessary noise.
+
+This is done by saving the idf value of every word column to an array (during the TF_IDF creation), and the only using the ones with the lowest value(most importance). This sorting functions returns the indexes of the best word columns, which are used to create the improved arrays. 
+
+## Creating Machine learing data
+
+The dataset is created based on the positive_relations.csv, the negative_relations.csv and the improved BoW or TF_IDF (based on what the user asks for). Every relation is translated to the subtraction of the two vectors of its jsons, creating a vector for ML. These vectors are split to Train_Set.csv and Test_Set.csv (4/5 to train and 1/5 to test) to be used for Machine Learning.
+
+### Compilation: 
+```
+$ make
+``` 
+
+### Execution:
+```
+$ ./project2 bow
+
+  or
+
+$ ./project2 tf_idf  
+```
+## Machine Learning
+
+### Logistic Regression 
+
+First and foremost the machine learning (logistic regression) part of the project is implemented in standard C++ without using any external libraries! 
+
+ - To compile change directory into the MachineLearning directory and provide the following: 
+
+```bash
+$ g++ -o log_regr main_log_regr.cpp
+```
+
+ - To run: 
+
+```bash
+$ time ./log_regr
+```
+
+> The logistic regression part of the project is implemented following the project's description without any further modifications. (Source code is well commented for further understanding.)
+
+### Unit Testing (for logistic regression)
+
+The unit testing made for the machine learning part of the project is done using `Googletest - Google Testing and Mocking Framework`. <br>
+Installation instructions for the framework can be found here ~> [gtest](https://github.com/google/googletest).
+
+ - To run the tests: 
+
+Get into the src/MachineLearning/tests directory and provide the following: 
+
+ - Compile: 
+
+```bash
+$ g++ ML_test.cpp -lgtest -lgtest_main -pthread 
+```
+
+ - Run: 
+
+```bash
+$ ./a.out
+```
 
 <a href="mailto:sdi1400176@di.uoa.gr">🧑 Nikitas Sakkas</a>, <a href="mailto:sdi1500201@di.uoa.gr">🧔 Andrew Pappas</a>, <a href="mailto:sdi1400126@di.uoa.gr">👩 Konstantina Nika</a> <br>
 :copyright: 2020 - 2021, All Rights Reserved.
