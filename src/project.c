@@ -152,15 +152,11 @@ int main(int argc,char** argv)
 
   printf("All relations are added.\n\n");
   fclose(w_fp);
-
+//create relations files
   FILE *fp2;
   FILE *fp3;
   char *positive_relations = "positive_relations.csv";
   char *negative_relations = "negative_relations.csv";
-
-  // json_remover = strstr(filename, "\n"); //remove "\n" substring from filename
-  // *json_remover = '\0';
-  // filename = strcat(filename, ".csv");
 
   printf("Creating %s...\n", positive_relations);
   fp2 = fopen(positive_relations, "w+");
@@ -192,21 +188,25 @@ int main(int argc,char** argv)
   if(strcmp(argv[1],"bow")==0){
     printf("Improving BoW...\n");
     bow_array = improve_bow(bow_array);
+    printf("BoW improved.\n\n");
     printf("Creating Training Set using BoW...\n");
-    create_train_set_bow(bow_array, NUMOFWORDS, database_root, positive_relations, negative_relations);
-    printf("Training Set created...\n");
+    create_train_set_bow(bow_array, database_root, positive_relations, negative_relations);
+    printf("Training Set created.\n\n");
   }
   else if(strcmp(argv[1],"tf_idf")==0){
     printf("Improving TF_IDF...\n");
     tf_idf_array = improve_tf_idf(tf_idf_array);
-    printf("Creating Training Set using tf idf...\n");
-    create_train_set_tfidf(tf_idf_array, NUMOFWORDS, database_root, positive_relations, negative_relations);
-    printf("Training Set created...\n");
+    printf("TF_IDF improved.\n\n");
+    printf("Creating Training Set using TF_IDF...\n");
+    create_train_set_tfidf(tf_idf_array, database_root, positive_relations, negative_relations);
+    printf("Training Set created.\n\n");
   }
 
   printf("Freeing Database...\n");
   free_node(database_root);
+  // free_arrays(bow_array,tf_idf_array);
   printf("Database Freed.\n\n");
+
 
   printf("Shutting Down.\n");
 

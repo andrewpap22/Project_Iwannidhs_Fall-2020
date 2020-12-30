@@ -4,7 +4,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#define features 100
+#define features 250
 #define learning_rate 0.001
 #define iterations 100
 
@@ -19,8 +19,8 @@ int main(void)
 	/*
 	 * Our own dataset
 	*/
-	string train = "./data/Train_Set.csv";
-	string test = "./data/Test_Set.csv";
+	string train = "./data/250_Train_Set.csv";
+	string test = "./data/250_Test_Set.csv";
 
 	LogisticRegression lr(learning_rate, iterations);
 	Matrix training_exp = lr.readFromInputFile(train);

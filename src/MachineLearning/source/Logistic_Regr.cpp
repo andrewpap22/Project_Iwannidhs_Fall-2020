@@ -5,7 +5,7 @@ using namespace std;
 
 LogisticRegression::LogisticRegression(double learning_rate, int iterations)
 {
-  this->features = 100;
+  this->features = 250;
   this->iterations = iterations;
   this->learning_rate = learning_rate;
 }

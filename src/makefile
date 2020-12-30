@@ -6,7 +6,7 @@
 OBJS	= project.o dot-C_files/structs.o dot-C_files/W_handler.o dot-C_files/json_parser.o dot-C_files/train_set_handler.o
 SOURCE	= project.c dot-C_files/structs.c dot-C_files/W_handler.c dot-C_files/json_parser.c dot-C_files/train_set_handler.c
 HEADER	= headers/structs.h headers/W_handler.h headers/json_parser.h headers/includes_for_parser.h dot-C_files/train_set_handler.h
-OUT	= project1
+OUT	= project2
 CC	 = gcc
 FLAGS	 = -g -c -Wall
 LFLAGS	 = -ljson-c -lm
@@ -37,4 +37,4 @@ src/dot-C_files/train_set_handler.o: dot-C_files/train_set_handler.c
 # clean house
 clean:
 	rm -f $(OBJS) $(OUT)
-	#rm *.csv
+	rm *.csv

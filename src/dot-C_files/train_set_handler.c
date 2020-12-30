@@ -111,6 +111,7 @@ char stopwords[NUMOFSTOPWORDS][15] = {
 	"some",
 	"such",
 	"no",
+	"yes",
 	"nor",
 	"not",
 	"only",
@@ -166,6 +167,7 @@ float *idf_array;
 
 //Functions 
 
+//check if a word is a stopword, remove it if it is
 int stopword_check(char* word){
     for(int i = 0; i < NUMOFSTOPWORDS; i++){
         if(strcmp(word,stopwords[i])==0){
@@ -174,7 +176,7 @@ int stopword_check(char* word){
     }
 	return 0;
 }
-void create_train_set_tfidf(float** data_array, int num_of_words, tree_entry* database_root, char* positive_relations_file, char* negative_relations_file){
+void create_train_set_tfidf(float** data_array, tree_entry* database_root, char* positive_relations_file, char* negative_relations_file){
 	FILE * fp;
 	FILE * fp_train;
 	FILE * fp_test;
@@ -197,15 +199,17 @@ void create_train_set_tfidf(float** data_array, int num_of_words, tree_entry* da
     fp = fopen(positive_relations_file, "r");
     if (fp == NULL)
         exit(EXIT_FAILURE);
+//get the positive_relations.csv number of lines...
 	for(c = getc(fp); c != EOF; c = getc(fp)) {
-		if (c == '\n'){ // Increment positive_line_count if this character is newline 
+		if (c == '\n'){ 
 			positive_line_count ++; 
 		}
 	}
-	printf("%d lines from positive relations file to train\n",(positive_line_count*4)/5);
+	// printf("%d lines from positive relations file to train\n",(positive_line_count*4)/5);
+//.. add 4/5 to train..
 	fseek(fp, 0L, SEEK_SET);
-	for (int j = 0; j < (positive_line_count*4)/5; j++){
-		// printf("%d\n",j);
+			for(int j=0; j < (positive_line_count*4)/5; j++){
+	// for (int j = 0; j < 3000; j++){
 		read = getline(&line, &len, fp);
 		part_of_string = strtok(line, ", "); 
 		strcpy(json1, part_of_string);
@@ -222,9 +226,10 @@ void create_train_set_tfidf(float** data_array, int num_of_words, tree_entry* da
 		}
 		fprintf(fp_train, "%d\n",relation);
 	}
-	//get data to put to test set
+//..and 1/5 to test set.
     while ((read = getline(&line, &len, fp)) != -1) {
-	
+	// for (int j = 0; j <250; j++){
+		// read = getline(&line, &len, fp);
 		part_of_string = strtok(line, ", "); 
 		strcpy(json1, part_of_string);
 		part_of_string = strtok(NULL, ", "); 
@@ -245,15 +250,17 @@ void create_train_set_tfidf(float** data_array, int num_of_words, tree_entry* da
     fp = fopen(negative_relations_file, "r");
     if (fp == NULL)
         exit(EXIT_FAILURE);
+// get the negative_relations.csv number of lines...
 	for(c = getc(fp); c != EOF; c = getc(fp)) {
-		if (c == '\n'){ // Increment negative_line_count if this character is newline 
+		if (c == '\n'){ 
 			negative_line_count ++; 
 		}
 	}
 	// printf("%d lines from negative relations file to train\n",(negative_line_count*4)/5);
 	fseek(fp, 0L, SEEK_SET);
-	for (int j = 0; j < (negative_line_count*4)/5; j++){
-		// printf("%d\n",j);
+//.. add 4/5 to train..
+		for(int j=0; j <(negative_line_count*4)/5; j++){
+	// for (int j = 0; j < 3000; j++){
 		read = getline(&line, &len, fp);
 		part_of_string = strtok(line, ", "); 
 		strcpy(json1, part_of_string);
@@ -270,9 +277,10 @@ void create_train_set_tfidf(float** data_array, int num_of_words, tree_entry* da
 		}
 		fprintf(fp_train, "%d\n",relation);
 	}
-	//get data to put to test set
+//.. and 1/5 to train.
     while ((read = getline(&line, &len, fp)) != -1) {
-	
+	// for (int j = 0; j <400; j++){
+		read = getline(&line, &len, fp);
 		part_of_string = strtok(line, ", "); 
 		strcpy(json1, part_of_string);
 		part_of_string = strtok(NULL, ", "); 
@@ -295,7 +303,7 @@ void create_train_set_tfidf(float** data_array, int num_of_words, tree_entry* da
 	free(json2);
 }
 
-void create_train_set_bow(int** data_array, int num_of_words, tree_entry* database_root, char* positive_relations_file, char* negative_relations_file){
+void create_train_set_bow(int** data_array, tree_entry* database_root, char* positive_relations_file, char* negative_relations_file){
 	FILE * fp;
 	FILE * fp_train;
 	FILE * fp_test;
@@ -318,15 +326,16 @@ void create_train_set_bow(int** data_array, int num_of_words, tree_entry* databa
     fp = fopen(positive_relations_file, "r");
     if (fp == NULL)
         exit(EXIT_FAILURE);
+//get the positive_relations.csv number of lines...
+
 	for(c = getc(fp); c != EOF; c = getc(fp)) {
-		if (c == '\n'){ // Increment positive_line_count if this character is newline 
+		if (c == '\n'){ 
 			positive_line_count ++; 
 		}
 	}
-	// printf("%d lines from positive relations file to train\n",(positive_line_count*4)/5);
 	fseek(fp, 0L, SEEK_SET);
+//.. add 4/5 to train..
 	for (int j = 0; j < (positive_line_count*4)/5; j++){
-		// printf("%d\n",j);
 		read = getline(&line, &len, fp);
 		part_of_string = strtok(line, ", "); 
 		strcpy(json1, part_of_string);
@@ -343,7 +352,7 @@ void create_train_set_bow(int** data_array, int num_of_words, tree_entry* databa
 		}
 		fprintf(fp_train, "%d\n",relation);
 	}
-	//get data to put to test set
+//.. and 1/5 to train.
     while ((read = getline(&line, &len, fp)) != -1) {
 	
 		part_of_string = strtok(line, ", "); 
@@ -366,15 +375,16 @@ void create_train_set_bow(int** data_array, int num_of_words, tree_entry* databa
     fp = fopen(negative_relations_file, "r");
     if (fp == NULL)
         exit(EXIT_FAILURE);
+// get the negative_relations.csv number of lines...
 	for(c = getc(fp); c != EOF; c = getc(fp)) {
-		if (c == '\n'){ // Increment negative_line_count if this character is newline 
+		if (c == '\n'){ 
 			negative_line_count ++; 
 		}
 	}
 	printf("%d lines from negative relations file to train\n",(negative_line_count*4)/5);
 	fseek(fp, 0L, SEEK_SET);
+//.. add 4/5 to train..
 	for (int j = 0; j < (negative_line_count*4)/5; j++){
-		// printf("%d\n",j);
 		read = getline(&line, &len, fp);
 		part_of_string = strtok(line, ", "); 
 		strcpy(json1, part_of_string);
@@ -391,7 +401,7 @@ void create_train_set_bow(int** data_array, int num_of_words, tree_entry* databa
 		}
 		fprintf(fp_train, "%d\n",relation);
 	}
-	//get data to put to test set
+//.. and 1/5 to train.
     while ((read = getline(&line, &len, fp)) != -1) {
 	
 		part_of_string = strtok(line, ", "); 
@@ -415,6 +425,7 @@ void create_train_set_bow(int** data_array, int num_of_words, tree_entry* databa
 	free(json1);
 	free(json2);
 }
+// sort idf_array from lowe to high and return its indexes
 int* sort_idf_array(){
 	float smallest_value = 100.0;
 	int index = 0;
@@ -432,6 +443,7 @@ int* sort_idf_array(){
 	}
 	return indexes;
 }
+// improve the tf_idf by selecting the columns with the lowest idf_score, return the improved array
 float ** improve_tf_idf(float** tf_idf_array){
 	int* indexes = sort_idf_array();
 	float** improved_tf_idf = malloc(sizeof(float*)*WORDS_FOR_DATASET);
@@ -440,7 +452,7 @@ float ** improve_tf_idf(float** tf_idf_array){
 	}
 	return improved_tf_idf;
 }
-
+// improve the bow by selecting the columns with the lowest idf_score, return the improved array
 int ** improve_bow(int** bow_array){
 	int* indexes = sort_idf_array();
 	int** improved_bow = malloc(sizeof(int*)*WORDS_FOR_DATASET);
@@ -451,15 +463,14 @@ int ** improve_bow(int** bow_array){
 }
 
 float ** create_tf_idf(int** bow_array){
-	int word_count = num_of_unique_usefull_words;
-	int json_count = json_key;
-	// printf("word_count %d\n",word_count);
-	// printf("json_count %d\n",json_count);
+// create the tf_idf array based on bow array and the following data:
+	int word_count = num_of_unique_usefull_words;	//total word_count
+	int json_count = json_key;						//total json_count
 
-	int json_total_words[json_count];	//num of words for every json
-	int jsons_including_word_array[word_count];	//num of jsons that every word appears in atleast once
+	int json_total_words[json_count];				//num of words for every json
+	int jsons_including_word_array[word_count];		//num of jsons that every word appears in atleast once
 
-	//the idf_array will be used to store the most important word columns for the final array (bow or tf_idf)
+	//the idf_array will be used to store the most important word columns for the final improved array (bow or tf_idf), not used here
 	idf_array = malloc(sizeof(int)*num_of_unique_usefull_words);
 	
 
@@ -470,23 +481,17 @@ float ** create_tf_idf(int** bow_array){
 	for (int cur_word = 0; cur_word < word_count; cur_word++){
 		jsons_including_word_array[cur_word] = 0;
 		for (int cur_json = 0; cur_json < json_count; cur_json++){
+			//if a bow entry is nonzero..
 			if (bow_array[cur_word][cur_json]>0){
-				jsons_including_word_array[cur_word] += 1 ;
-				// printf("%d\n",bow_array[cur_word][cur_json]);
-				json_total_words[cur_json] += bow_array[cur_word][cur_json];
-				// printf("%d\n\n",json_total_words[cur_json]);
+				jsons_including_word_array[cur_word] += 1 ;	//..then one more json contains this word
+				json_total_words[cur_json] += bow_array[cur_word][cur_json]; //..and the current json has that many more words in it
 			}
 		}
 	}
 	float tf;
 	float idf;
 	float** tf_idf_array = malloc(word_count*sizeof(float*));
-	// for (int cur_word = 0; cur_word < word_count; cur_word++){
-	// 	for (int cur_json = 0; cur_json < json_count; cur_json++){
-	// 		printf("%d\n",cur_word);
-	// 		tf_idf_array[cur_word][cur_json] = 0;
-	// 	}
-	// }
+
 	//create tf_idf_array
 	for (int cur_word = 0; cur_word < word_count; cur_word++){
 		//allocate tf_idf_array column by column
@@ -498,6 +503,7 @@ float ** create_tf_idf(int** bow_array){
 	}
 	//fill tf_idf_array
 	for (int cur_word = 0; cur_word < word_count; cur_word++){
+		//calculate idf for each row
 		idf = log10f(((float)(json_count))/((float)(jsons_including_word_array[cur_word])));
 		idf_array[cur_word] = idf;
 		// printf("idf:                        %lf\n\n",idf);
@@ -506,45 +512,49 @@ float ** create_tf_idf(int** bow_array){
 				tf = 0;
 			}
 			else{
+				//calculate tf for each entry
 				tf = (float)bow_array[cur_word][cur_json]/(float)json_total_words[cur_json];
 			}
 			// printf("tf:          %lf\n\n",tf);
 			// printf("tf idf:     %lf\n", tf*idf);
+
+			//calculate idf for each entry and add it to tf_idf array
 			tf_idf_array[cur_word][cur_json] = tf*idf;
 		}
 		// free(bow_array[cur_word]);
-		// printf("%d\n",cur_word);
 	}
 	return tf_idf_array;
 }
-
 
 int ** create_bow_array(tree_entry* json_node){
 	bow_tree_entry* bow_root = create_bow_tree(json_node);
 
 	int** bow_array = malloc(num_of_unique_words*sizeof(int*));
+	//allocate bow_array
 	for (int i = 0; i < num_of_unique_words; i++){
 		bow_array[i] = malloc(sizeof(int)*json_key);
 	}
 	printf("%d different words in BoW\n",num_of_unique_words);
+	//add all columns to bow_Array (one column for every word)
 	get_bow_tree_entries(bow_root, bow_array);
 	printf("%d different words in BoW after stopword removal\n",num_of_unique_usefull_words);
-
 	return bow_array;
 }
 
 
 void get_bow_tree_entries(bow_tree_entry* bow_root, int** bow_array){
+	//recursively check if every word is a stop_word..
 	if (bow_root == NULL){
 		return;
 	}
 	else{
+		//  ..if not add it to bow_array
 		get_bow_tree_entries(bow_root->left, bow_array);
 		if (stopword_check(bow_root->word)==0){
 			bow_array[word_key] = bow_root->wordcounts;
 			word_key++;
 			num_of_unique_usefull_words++;
-			/*print dictionary*/
+			/* remove comment below to print dictionary */
 			//printf("%s ",bow_root->word);
 		}
 		get_bow_tree_entries(bow_root->right, bow_array);
@@ -558,6 +568,7 @@ bow_tree_entry* create_bow_tree(tree_entry* json_node){
 	return bow_root;
 }
 void add_json_keys(tree_entry* root){
+	//recursively add a key for every json (from 0 to json_count so that we can use arrays later)
 	if (root==NULL){
 		return;
 	}
@@ -571,6 +582,7 @@ void add_json_keys(tree_entry* root){
 }
 
 bow_tree_entry* add_jsons_to_bow(bow_tree_entry* bow_root, tree_entry* json_node){
+	//recursively add every json content to word tree
 	if (json_node==NULL){
 		return bow_root;
 	}
@@ -582,7 +594,7 @@ bow_tree_entry* add_jsons_to_bow(bow_tree_entry* bow_root, tree_entry* json_node
 }
 
 bow_tree_entry* json_to_bow(bow_tree_entry* bow_root, tree_entry* json_node){
-
+	//split json word by word and add them to word tree
 	char *current_word = strtok(json_node->specs," ");
 	while (current_word!=NULL){
 		current_word = strtok(NULL," ");		
@@ -593,22 +605,19 @@ bow_tree_entry* json_to_bow(bow_tree_entry* bow_root, tree_entry* json_node){
 }
 
 bow_tree_entry* word_to_bow(bow_tree_entry* bow_root, char* word, int jsonkey){
-	
+	//Preproccess words and add them to word tree
 	if (word==NULL){
 		return bow_root;
 	}
-	// printf("%s\n", word);
+	//Ignore really big words (propably noise)
 	if (strlen(word)>MAXWORDSIZE){
 		return bow_root;
 	}
-	
-
 	//Lowercase
 	for(int i = 0; i < strlen(word); i++){
  		*(word+i) = tolower(*(word+i));
 	}
-
-	/////////////////
+	//Remove symbols from words (only useless ones, for instance don't remove "." because "3.5" will become "35")
     int i = 0; 
     while(i<strlen(word)){
         if((*(word+i)==',') || (*(word+i)=='(') || (*(word+i)==')') || (*(word+i)==':') || (*(word+i)=='!') || (*(word+i)==';') || (*(word+i)=='\"') || (*(word+i)=='~') || (*(word+i)=='[') || (*(word+i)==']') || (*(word+i)=='{') || (*(word+i)=='}')){
@@ -623,22 +632,28 @@ bow_tree_entry* word_to_bow(bow_tree_entry* bow_root, char* word, int jsonkey){
         }
         i++;
     }
-	/////////////////
-	
-	// else{
-		bow_tree_entry* search_result = bow_search(bow_root, word);
-		if (search_result!=NULL){
-			search_result->wordcounts[jsonkey] += 1; 
-		}
-		else{
-			// printf("^^ new word^^\n");
-			char* new_word = malloc(sizeof(char)*strlen(word)+2);
-			strcpy(new_word,word);
-			bow_root = bow_insert(bow_root, jsonkey, new_word);
-		}
-		return bow_root;
-	// }
+	//after preproccessing check if the word already exists..
+	bow_tree_entry* search_result = bow_search(bow_root, word);
+	// ..if it does, increase the wordcount of this json for this word.
+	if (search_result!=NULL){
+		search_result->wordcounts[jsonkey] += 1; 
+	}
+	// ..it it doesn't, add it.
+	else{
+		char* new_word = malloc(sizeof(char)*strlen(word)+2);
+		strcpy(new_word,word);
+		bow_root = bow_insert(bow_root, jsonkey, new_word);
+	}
+	return bow_root;
 }
+void free_arrays(int** bow_array, float** tf_idf_array){
+	for (int i = 0; i < word_key; i++){
+		free(bow_array[i]);
+		free(tf_idf_array[i]);
+	}
+}
+
+/*					Bow tree functions below (normal AVL tree functions)							*/
 
 bow_tree_entry *bow_insert(bow_tree_entry *T, int current_json, char *word)
 {
@@ -646,7 +661,6 @@ bow_tree_entry *bow_insert(bow_tree_entry *T, int current_json, char *word)
 	{
 		T = (bow_tree_entry *)malloc(sizeof(bow_tree_entry));
 
-		// T->word_key = word_key;
 		num_of_unique_words++;
 		T->word = word;
 		T->left = NULL;
@@ -700,8 +714,7 @@ bow_tree_entry *bow_search(bow_tree_entry *T, char *x)
 	}
 }
 
-int bow_height(bow_tree_entry *T)
-{
+int bow_height(bow_tree_entry *T){
 	int lh, rh;
 	if (T == NULL)
 		return (0);
@@ -722,8 +735,7 @@ int bow_height(bow_tree_entry *T)
 	return (rh);
 }
 
-bow_tree_entry *bow_rotateright(bow_tree_entry *x)
-{
+bow_tree_entry *bow_rotateright(bow_tree_entry *x){
 	bow_tree_entry *y;
 	y = x->left;
 	x->left = y->right;

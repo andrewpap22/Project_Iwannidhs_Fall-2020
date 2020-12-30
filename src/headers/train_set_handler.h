@@ -16,14 +16,13 @@
 #include <math.h>
 #include "../headers/structs.h"
 
-#define NUMOFSTOPWORDS 154
+#define NUMOFSTOPWORDS 155
 #define NUMOFENTRIES 29787
 #define MAXWORDSIZE 7
-#define WORDS_FOR_DATASET 100
+#define WORDS_FOR_DATASET 50
 // #define WORD_BUFFER 50
 
-typedef struct bow_tree_entry
-{
+typedef struct bow_tree_entry{
 
   struct bow_tree_entry *left;
   struct bow_tree_entry *right;
@@ -34,8 +33,8 @@ typedef struct bow_tree_entry
 
 } bow_tree_entry;
 
-void create_train_set_tfidf(float**, int, tree_entry*, char*, char*);
-void create_train_set_bow(int**, int, tree_entry*, char*, char*);
+void create_train_set_tfidf(float**, tree_entry*, char*, char*);
+void create_train_set_bow(int**, tree_entry*, char*, char*);
 int stopword_check(char*);
 void add_json_keys(tree_entry*);
 int* sort_idf_array();
@@ -48,7 +47,6 @@ bow_tree_entry* word_to_bow(bow_tree_entry*, char*, int);
 int ** create_bow_array(tree_entry*);
 void get_bow_tree_entries(bow_tree_entry*, int**);
 float ** create_tf_idf(int**);
-
 
 bow_tree_entry *bow_insert(bow_tree_entry *, int, char *);
 bow_tree_entry *bow_search(bow_tree_entry *, char *);
