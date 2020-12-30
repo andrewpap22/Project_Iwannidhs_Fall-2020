@@ -240,6 +240,7 @@ For the negative relations, a tree is added to the headbucket of every clique. E
 
 ## Parsing
 
+First and foremost the parsing is now completely made from scratch and without any use of external libraries as it was on the 1st part of the project.
 For json parsing we first read every json and put all its contents in a string just like project1. Then parse it line by line and only keep the words by removing the labels and
 symbols surrounding the lines.
 
