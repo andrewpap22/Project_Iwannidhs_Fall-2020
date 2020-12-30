@@ -6,7 +6,7 @@ using namespace std;
 
 #define features 250
 #define learning_rate 0.001
-#define iterations 111
+#define iterations 222
 
 int main(void)
 {
