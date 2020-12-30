@@ -202,9 +202,50 @@ How to run the tests <br>
 
 <hr>
 
-## `Part 2` of the Project
+# `Part 2` of the Project
 
 From here and on we'll continue the documentation of the `part2` of the project.
+
+## Machine Learning
+
+### Logistic Regression 
+
+First and foremost the machine learning (logistic regression) part of the project is implemented in standard C++ without using any external libraries! 
+
+ - To compile change directory into the MachineLearning directory and provide the following: 
+
+```bash
+$ g++ -o log_regr main_log_regr.cpp
+```
+
+ - To run: 
+
+```bash
+$ time ./log_regr
+```
+
+> The logistic regression part of the project is implemented following the project's description without any further modifications. (Source code is well commented for further understanding.)
+
+### Unit Testing (for logistic regression)
+
+The unit testing made for the machine learning part of the project is done using `Googletest - Google Testing and Mocking Framework`. <br>
+Installation instructions for the framework can be found here ~> [gtest](https://github.com/google/googletest).
+
+ - To run the tests: 
+
+Get into the src/MachineLearning/tests directory and provide the following: 
+
+ - Compile: 
+
+```bash
+$ g++ ML_test.cpp -lgtest -lgtest_main -pthread 
+```
+
+ - Run: 
+
+```bash
+$ ./a.out
+```
 
 <a href="mailto:sdi1400176@di.uoa.gr">🧑 Nikitas Sakkas</a>, <a href="mailto:sdi1500201@di.uoa.gr">🧔 Andrew Pappas</a>, <a href="mailto:sdi1400126@di.uoa.gr">👩 Konstantina Nika</a> <br>
 :copyright: 2020 - 2021, All Rights Reserved.
