@@ -11,7 +11,7 @@
 #include <sys/types.h>
 #include <dirent.h>
 #include <errno.h>
-#include <json-c/json.h>
+//#include <json-c/json.h>
 
 #define BUCKETSIZE 200
 

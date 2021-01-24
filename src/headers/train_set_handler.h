@@ -12,14 +12,15 @@
 #include <dirent.h>
 #include <errno.h>
 #include <ctype.h>
-#include <json-c/json.h>
-#include <math.h>
+#include <math.h> 
+#include <time.h>
+// #include <json-c/json.h>
 #include "../headers/structs.h"
 
 #define NUMOFSTOPWORDS 155
 #define NUMOFENTRIES 29787
 #define MAXWORDSIZE 7
-#define WORDS_FOR_DATASET 200
+#define WORDS_FOR_DATASET 250
 // #define WORD_BUFFER 50
 
 typedef struct bow_tree_entry{

@@ -390,12 +390,12 @@ char* read_json(char* json_filename)
 	fread(buffer, file_size, 1, fp); //read the file and put its contents into the buffer.
 	fclose(fp);
 	//parse json's file contents and convert it into json object.
-	parsed_json = json_tokener_parse(buffer);
-	specs = malloc(file_size * sizeof(char));
-	strcpy(specs, json_object_to_json_string(parsed_json)); // stringify the json object and store it as a single string.
+	// parsed_json = json_tokener_parse(buffer);
+	// specs = malloc(file_size * sizeof(char));
+	// strcpy(specs, json_object_to_json_string(parsed_json)); // stringify the json object and store it as a single string.
 
-	free(buffer);
-	return (specs); // return the stringified version of the json object of each and every .json file.
+	// free(buffer);
+	return (buffer); // return the stringified version of the json object of each and every .json file.
 }
 
 

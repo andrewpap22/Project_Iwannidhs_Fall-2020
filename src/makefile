@@ -8,8 +8,8 @@ SOURCE	= project.c dot-C_files/structs.c dot-C_files/W_handler.c dot-C_files/jso
 HEADER	= headers/structs.h headers/W_handler.h headers/json_parser.h headers/includes_for_parser.h dot-C_files/train_set_handler.h
 OUT	= project2
 CC	 = gcc
-FLAGS	 = -g -c -Wall
-LFLAGS	 = -ljson-c -lm
+FLAGS	 = -g -c #-Wall
+LFLAGS	 = -lm #-ljson-c 
 # -g option enables debugging mode 
 # -c flag generates object code for separate files
 
