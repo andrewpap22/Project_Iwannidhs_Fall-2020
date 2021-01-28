@@ -209,7 +209,7 @@ void create_train_set_tfidf(float** data_array, tree_entry* database_root, char*
 
     if (fp_pos == NULL)
         exit(EXIT_FAILURE);
-//get the positive_relations.csv (because its the smallest of the files) number of lines...f
+//get the positive_relations.csv (because its the smallest of the files) number of lines...
 	for(c = getc(fp_pos); c != EOF; c = getc(fp_pos)) {
 		if (c == '\n'){ 
 			positive_line_count ++; 
@@ -299,9 +299,9 @@ void create_train_set_tfidf(float** data_array, tree_entry* database_root, char*
 
 		for (int i = 0; i < WORDS_FOR_DATASET; i++){
 			num = (data_array[i][entry1->json] - data_array[i][entry2->json]);
-			if(num<0){
-				num = - num;
-			}
+			// if(num<0){
+			// 	num = - num;
+			// }
 			fprintf(fp_test, "%f, ",num);
 		}
 		fprintf(fp_test, "%d\n",relation);

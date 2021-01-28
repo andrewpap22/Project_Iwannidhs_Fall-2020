@@ -14,6 +14,12 @@ int main(void){
 	/*
 	 * Our own dataset
 	*/
+
+	cout<<"Machine Learning stats:\n";
+	cout<<"NUM_OF_FEATURES: "<<NUM_OF_FEATURES<<nl;
+	cout<<"LEARNING_RATE: "<<LEARNING_RATE<<nl;
+	cout<<"ITERATIONS: "<<ITERATIONS<<nl;
+	
 	string train = "./data/250_Train_Set.csv";
 	string test = "./data/250_Test_Set.csv";
 
@@ -24,14 +30,13 @@ int main(void){
 	Point4d weights = Point4d(NUM_OF_FEATURES, 1);
 
 	// Point5d optimal_weights = lr.gradientDesent(bias, weights, training_exp);
-	// lr.testAndPrint(optimal_weights, test_exp);
+	Point5d optimal_weights = train_model(&lr,&training_exp,bias);
 
-	// lr.create_new_training_Set(optimal_weights, training_exp);
-	
-	Point5d optimal_weights = train_model(&lr,&training_exp,bias,BATCH_SIZE);
+	// lr.testAndPrint(optimal_weights, test_exp);
 	test_model(&test_exp, optimal_weights.first, optimal_weights.second);
 
-
+	cout<<"\nShutting down..\n";
+	// lr.create_new_training_Set(optimal_weights, training_exp);
 
 	return 0;
 }

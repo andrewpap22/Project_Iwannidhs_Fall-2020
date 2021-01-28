@@ -78,6 +78,7 @@ Calculate and return gradient of logistic error function
 for given value of bias, weights.
 */
 Point5d calculateGradient(double bias, Point4d weights, Matrix examples, int features,int start, int end){
+  // cout<<"calculating gradient from "<<start<<" to "<<end<< nl;
   double sum = 0;
   double bias_grad = 0;
   Point4d grad = Point4d(features, 0);
@@ -121,6 +122,8 @@ iterations.
 */
 Point5d LogisticRegression::gradientDesent(double bias, Point4d weights, Matrix examples)
 {
+  cout << "\nTraining model using batch stochastic descent..\n";
+  cout<<"STOCHASTIC_PORTION: "<<STOCHASTIC_PORTION<<nl<<nl;
   int iterations = this->iterations;
   int features = this->features;
   double lr = this->learning_rate;
@@ -139,28 +142,6 @@ Point5d LogisticRegression::gradientDesent(double bias, Point4d weights, Matrix 
   }
   return {bias, weights};
 }
-
-/*
-Calculate and print Accuracy, Precision and Recall.
-*/
-// void LogisticRegression::create_new_training_Set(Point5d optimal_weights, Matrix training_set){
-//   double threshold = 0.5;
-//   int tp = 0, fp = 0, tn = 0, fn = 0;
-//   int features = this->features;
-//   while (threshold >= 0){
-//     for (auto example : training_set){
-//       double bias = optimal_weights.first;
-//       Point4d weights = optimal_weights.second;
-//       double sigmoid_ = sigmoid(bias, weights, example, features);
-//       if((sigmoid_ <= threshold) || (sigmoid_ >= 1 - threshold)){
-//         //add to set
-//         // cout << sigmoid_ << nl;
-//       }
-//     }
-//     cout << nl;
-//     threshold -= 0.01;
-//   }
-// }
 
 void LogisticRegression::testAndPrint(Point5d optimal_weights, Matrix testing_exp)
 {
@@ -183,8 +164,8 @@ void LogisticRegression::testAndPrint(Point5d optimal_weights, Matrix testing_ex
     if (predicted && !actual)
       fp++;
   }
-
-  cout << nl << nl << "True Positives:  " << tp << nl;
+  cout <<"Model tested.\n";
+  cout << nl << "True Positives:  " << true_positives << nl;
   cout << "True Negatives:  " << tn << nl;
   cout << "False Positives: " << fp << nl;
   cout << "False Negatives: " << fn << nl;
@@ -218,6 +199,9 @@ Job_Scheduler::Job_Scheduler(int numofthreads){
 void Job_Scheduler::submit_job(job* j){
   enqueue(this->queue_struct, j);
 }
+void Job_Scheduler::execute_all_jobs(){
+
+}
 
 void* QueryJob(void* sch){
   Job_Scheduler* scheduler;
@@ -225,7 +209,6 @@ void* QueryJob(void* sch){
   job* j;
     //take query
     while(1){
-  // cout << "yoo"<<nl;
       pthread_mutex_lock(scheduler->dequeue_mutex);
       if (isempty(scheduler->queue_struct)==1){
         pthread_mutex_unlock(scheduler->dequeue_mutex);
@@ -240,22 +223,12 @@ void* QueryJob(void* sch){
       //training job
       if(j->type == 0){
         Matrix* train_matrix = j->array;
-        // Matrix  job_matrix;
-
-        // fill the job matrix
-        // for (int i = 0; i < j->batch_size; i++){
-        //   job_matrix.push_back((*train_matrix)[(j->id)*(j->batch_size) + i]);
-        // }
         //calculate its gradient
         LogisticRegression lr(LEARNING_RATE, ITERATIONS);
         Point5d grad;
-
-        // if(j->id == 0){
-        //   double error = findError(j->bias, *(j->weights), job_matrix, NUM_OF_FEATURES);
-        //   cout << "error: " << error << nl;
-        // }
-
-        grad = calculateGradient(j->bias, *(j->weights), *train_matrix, NUM_OF_FEATURES, (j->id)*(j->batch_size), (j->id)*(j->batch_size + 1));
+        grad = calculateGradient(j->bias, *(j->weights), *train_matrix, NUM_OF_FEATURES, (j->id)*(j->batch_size), (j->id + 1)*(j->batch_size));
+        //remove comments to do batch gradient descent with batch_size=train_size (no reason to do it besides debugging, it should return the same results as full gradient descent)
+        // grad = calculateGradient(j->bias, *(j->weights), *train_matrix, NUM_OF_FEATURES, 0, train_size);
         for (int i = 0; i < NUM_OF_FEATURES; i++){
           batch_gd_grad.second[i] += grad.second[i];
         }  
@@ -265,21 +238,14 @@ void* QueryJob(void* sch){
       if(j->type == 1){
         // cout<< "thread job id: "<<j->id<<nl;
         Matrix* test_matrix = j->array;
-        // Matrix  job_matrix;
         int thread_test_size = test_size/scheduler->num_of_threads;
-
         // cout << "test_size: "<< test_size <<nl;
-
         // cout << "thread_test_size: "<< thread_test_size <<nl;
         double bias = j->bias;
         // cout << "bias: "<< bias <<nl;
         Point4d weights = *(j->weights);
 
         //fill the job matrix
-        // for (int i = 0; i < thread_test_size; i++){
-        //   job_matrix.push_back((*test_matrix)[(j->id)*(thread_test_size) + i]);
-        // }
-        // for (auto example : job_matrix){
         for (int i = (j->id)*(thread_test_size); i < (j->id + 1)*(thread_test_size); i++){       
           double sigmoid_ = sigmoid(bias, weights, (*test_matrix)[i], NUM_OF_FEATURES);
           bool predicted = (sigmoid_ >= 0.5);
@@ -295,14 +261,16 @@ void* QueryJob(void* sch){
         }
       }
     }
-    // cout <<"querry job:peace out\n";
+    // cout <<"thread exiting\n";
     pthread_exit(NULL);
     return NULL;
 }
 
 
-Point5d train_model(LogisticRegression* lr, Matrix* train_set, double bias, int batch_size){
- 	
+Point5d train_model(LogisticRegression* lr, Matrix* train_set, double bias){
+  cout << "\nTraining model using batch gradient descent..\n";
+ 	cout<<"NUM_OF_THREADS: "<<NUM_OF_THREADS<<nl;
+  cout<<"BATCH_SIZE: "<<BATCH_SIZE<<nl<<nl;
   Point4d weights = Point4d(NUM_OF_FEATURES, 1);
   double learning_rate = LEARNING_RATE;
   int iterations = ITERATIONS;
@@ -316,27 +284,28 @@ Point5d train_model(LogisticRegression* lr, Matrix* train_set, double bias, int 
     printf("\n mutex init has failed\n"); 
     return {bias, weights};
   } 
-  int total_batches = train_size/batch_size;
-  // cout << train_size <<nl;
-  // cout << batch_size <<nl;
-  // cout <<"total batches:"<< total_batches <<nl;
+  int total_batches = train_size/BATCH_SIZE;
+  // cout <<  <<nl;
+  // cout << batch_size <<nl<<nl;
+  cout <<"train size:"<< train_size <<nl;
+  cout <<"batch size:"<< BATCH_SIZE <<nl;
+  cout <<"total batches:"<< total_batches <<nl<<nl;
 
   //initialize batch_gd_grad
   batch_gd_grad.second = Point4d(NUM_OF_FEATURES,0);
   batch_gd_grad.first = 0;
 
-  cout << "Training model using batch gradient descent..\n";
   //batch gradient descent
   for (int iteration = 0; iteration < iterations; iteration++){ 
-    // cout << "iteration "<< iteration<< nl;
+    // cout << "\niteration "<< iteration+1<< nl;
     //set batch_gd_grad to 0
     for (int i = 0; i < NUM_OF_FEATURES; i++){
       batch_gd_grad.second[i] = 0;
     }
     batch_gd_grad.first = 0;
     //add batch gradient calculation jobs in queue
+    // cout<< "adding jobs to queue"<<nl;
     for (int i = 0; i < total_batches; i++){
-      // cout<< "adding job "<< i<<nl;
       job* new_job = (job*)malloc(sizeof(job));
       new_job->type = 0;
       new_job->id = i;
@@ -348,6 +317,7 @@ Point5d train_model(LogisticRegression* lr, Matrix* train_set, double bias, int 
     }
     // printqueue(sch.queue_struct);
     // create threads to calculate the batch gradients
+    // cout<< "executing jobs jobs"<<nl;
     for(int i=0; i<sch.num_of_threads; i++) {
       // cout << "create thread "<< i <<nl;
       pthread_create(&sch.threads[i], NULL, QueryJob, (void*)(&sch));
@@ -356,6 +326,7 @@ Point5d train_model(LogisticRegression* lr, Matrix* train_set, double bias, int 
     for(int j=0; j<sch.num_of_threads; j++) {
       pthread_join(sch.threads[j], NULL);
     }
+    // cout<< "calculating average gradient"<<nl;
     //calculate average gradient of batch gradients
     for (int i = 0; i < NUM_OF_FEATURES; i++){
       batch_gd_grad.second[i] /= total_batches;
@@ -367,7 +338,7 @@ Point5d train_model(LogisticRegression* lr, Matrix* train_set, double bias, int 
     }
     bias = bias - learning_rate * batch_gd_grad.first;
     // error = findError(bias, weights, *train_set, NUM_OF_FEATURES);
-    // cout << "error: " << error << nl;
+    // cout << "error: " << error << nl << nl;
   }
   cout <<"Model trained.\n\n";
   //return optimal weights and bias
@@ -375,7 +346,7 @@ Point5d train_model(LogisticRegression* lr, Matrix* train_set, double bias, int 
 }
 
 void test_model(Matrix* test_set, double bias,Point4d optimal_weights){
-  cout <<"Testing model..\n";
+  cout <<"Testing model in parallel..\n";
   Job_Scheduler sch(NUM_OF_THREADS);
   if (pthread_mutex_init(sch.dequeue_mutex, NULL) != 0) { 
     printf("\n mutex init has failed\n"); 
@@ -400,8 +371,8 @@ void test_model(Matrix* test_set, double bias,Point4d optimal_weights){
   for(int j=0; j<sch.num_of_threads; j++) {
     pthread_join(sch.threads[j], NULL);
   }
-  cout <<"Model tested.\n\n";
-  cout << nl << nl << "True Positives:  " << true_positives << nl;
+  cout <<"Model tested.\n";
+  cout << nl << "True Positives:  " << true_positives << nl;
   cout << "True Negatives:  " << true_negatives << nl;
   cout << "False Positives: " << false_positives << nl;
   cout << "False Negatives: " << false_negatives << nl;
@@ -417,3 +388,22 @@ void test_model(Matrix* test_set, double bias,Point4d optimal_weights){
   cout << "Actual: 1\t" << false_negatives << "\t\t" << true_positives << nl;
 
 }
+
+// void LogisticRegression::create_new_training_Set(Point5d optimal_weights, Matrix training_set){
+//   double threshold = 0.5;
+//   int tp = 0, fp = 0, tn = 0, fn = 0;
+//   int features = this->features;
+//   while (threshold >= 0){
+//     for (auto example : training_set){
+//       double bias = optimal_weights.first;
+//       Point4d weights = optimal_weights.second;
+//       double sigmoid_ = sigmoid(bias, weights, example, features);
+//       if((sigmoid_ <= threshold) || (sigmoid_ >= 1 - threshold)){
+//         //add to set
+//         // cout << sigmoid_ << nl;
+//       }
+//     }
+//     cout << nl;
+//     threshold -= 0.01;
+//   }
+// }
