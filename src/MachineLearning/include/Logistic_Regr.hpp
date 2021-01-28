@@ -15,7 +15,7 @@ using namespace std;
 #define NUM_OF_THREADS 5
 #define STOCHASTIC_PORTION 1
 // #define NUM_OF_BATCHES 10
-#define BATCH_SIZE 500
+#define BATCH_SIZE 6000
 /*
  * So in this directory we have this Logistic Regression Binary Classifier implementation with gradient descent. 
 */
@@ -80,7 +80,6 @@ public:
 
   Job_Scheduler(int);
   void submit_job(job* job);
-  void execute_all_jobs();
 };
 
 

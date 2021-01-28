@@ -199,15 +199,12 @@ Job_Scheduler::Job_Scheduler(int numofthreads){
 void Job_Scheduler::submit_job(job* j){
   enqueue(this->queue_struct, j);
 }
-void Job_Scheduler::execute_all_jobs(){
 
-}
-
-void* QueryJob(void* sch){
+void* ThreadJob(void* sch){
   Job_Scheduler* scheduler;
   scheduler = (Job_Scheduler*)sch;
   job* j;
-    //take query
+    //access queue and take jobs
     while(1){
       pthread_mutex_lock(scheduler->dequeue_mutex);
       if (isempty(scheduler->queue_struct)==1){
@@ -320,7 +317,7 @@ Point5d train_model(LogisticRegression* lr, Matrix* train_set, double bias){
     // cout<< "executing jobs jobs"<<nl;
     for(int i=0; i<sch.num_of_threads; i++) {
       // cout << "create thread "<< i <<nl;
-      pthread_create(&sch.threads[i], NULL, QueryJob, (void*)(&sch));
+      pthread_create(&sch.threads[i], NULL, ThreadJob, (void*)(&sch));
     }
     // join the threads
     for(int j=0; j<sch.num_of_threads; j++) {
@@ -365,7 +362,7 @@ void test_model(Matrix* test_set, double bias,Point4d optimal_weights){
     // printqueue(sch.queue_struct);
     // create threads to calculate the batch gradients
   for(int i=0; i<sch.num_of_threads; i++) {
-    pthread_create(&sch.threads[i], NULL, QueryJob, (void*)(&sch));
+    pthread_create(&sch.threads[i], NULL, ThreadJob, (void*)(&sch));
   }
     // join the threads
   for(int j=0; j<sch.num_of_threads; j++) {
