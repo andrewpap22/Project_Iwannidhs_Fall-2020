@@ -15,7 +15,7 @@ using namespace std;
 #define NUM_OF_THREADS 5
 #define STOCHASTIC_PORTION 1
 // #define NUM_OF_BATCHES 10
-#define BATCH_SIZE 6000
+#define BATCH_SIZE 200
 /*
  * So in this directory we have this Logistic Regression Binary Classifier implementation with gradient descent. 
 */
@@ -84,7 +84,7 @@ public:
 
 
 
-Point5d train_model(LogisticRegression*, Matrix*, double);
-void test_model(Matrix*,double, Point4d);
+Point5d train_model(LogisticRegression*, Matrix*, double);    //parallel training
+void test_model(Matrix*,double, Point4d);                     //parallel testing
 
 #endif /* LOGISTIC_REGR_H */
